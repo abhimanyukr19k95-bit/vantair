@@ -1,0 +1,62 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: vantair-postgres
+    env: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile.postgres
+    disk:
+      name: vantair-postgres-data
+      sizeGB: 1
+      mountPath: /var/lib/postgresql/data
+    envVars:
+      - key: POSTGRES_DB
+        value: vantair
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        generateValue: true
+
+  # Spring Boot Backend API
+  - type: web
+    name: vantair-api
+    env: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./vantair-backend/Dockerfile
+    healthCheckPath: /api/products
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://vantair-postgres:5432/vantair
+      - key: SPRING_DATASOURCE_USERNAME
+        value: postgres
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromService:
+          type: pserv
+          name: vantair-postgres
+          envVarKey: POSTGRES_PASSWORD
+      - key: SERVER_PORT
+        value: 8080
+      - key: VANTAIR_CORS_ALLOWED_ORIGINS
+        value: https://vantair.onrender.com
+
+  # React Frontend (Static Site)
+  - type: web
+    name: vantair
+    env: static
+    plan: free
+    region: singapore
+    buildCommand: cd VANTAIR-Website-Complete && npm ci && npm run build
+    staticPublishPath: ./VANTAIR-Website-Complete/dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://vantair-api.onrender.com/api/:splat
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff

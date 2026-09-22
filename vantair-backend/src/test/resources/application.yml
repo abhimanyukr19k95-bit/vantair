@@ -1,0 +1,21 @@
+# Test profile: run the full Spring context against an in-memory H2 database
+# (PostgreSQL-compatible mode) instead of a real Postgres instance.
+spring:
+  datasource:
+    # NON_KEYWORDS=VALUE: the Coupon/RefundCoupon entities use a `value` column,
+    # which Postgres allows but H2 reserves — relax it so DDL/queries match prod.
+    url: jdbc:h2:mem:vantair;MODE=PostgreSQL;NON_KEYWORDS=VALUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    open-in-view: true
+
+vantair:
+  cors:
+    allowed-origins: "http://localhost:5500"

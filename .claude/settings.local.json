@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(code *)",
+      "Bash(open *)",
+      "WebFetch(domain:vantair.onrender.com)",
+      "Read(//Users/A200231121/Desktop/ProjectRepo/**)",
+      "Read(//Users/A200231121/Desktop/**)",
+      "Bash(curl *)",
+      "Bash(pg_isready -h localhost -p 5433)",
+      "Bash(echo \"pg_isready exit: $?\")",
+      "Bash(mvn -version)",
+      "Bash(java -version)",
+      "Bash(brew services *)",
+      "Bash(pg_ctl --version)",
+      "Read(//usr/local/**)",
+      "Read(//opt/homebrew/var/**)",
+      "Bash(docker compose *)",
+      "Bash(docker exec postgrest-postgres-1 *)",
+      "Bash(mvn spring-boot:run -Dspring-boot.run.jvmArguments=\"-Dserver.port=8082\")",
+      "Bash(API=http://localhost:8082 node server.js)",
+      "Bash(gh auth *)"
+    ]
+  }
+}
