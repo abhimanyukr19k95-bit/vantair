@@ -1,54 +1,47 @@
-services:
-  # PostgreSQL Database
-  - type: pserv
-    name: vantair-postgres
-    env: docker
+databases:
+  - name: vantair-db
+    databaseName: vantair
+    user: vantair_user
     plan: free
     region: singapore
-    dockerfilePath: ./Dockerfile.postgres
-    disk:
-      name: vantair-postgres-data
-      sizeGB: 1
-      mountPath: /var/lib/postgresql/data
-    envVars:
-      - key: POSTGRES_DB
-        value: vantair
-      - key: POSTGRES_USER
-        value: postgres
-      - key: POSTGRES_PASSWORD
-        generateValue: true
+    ipAllowList: []
 
+services:
   # Spring Boot Backend API
   - type: web
     name: vantair-api
-    env: docker
+    runtime: docker
     plan: free
     region: singapore
     dockerfilePath: ./vantair-backend/Dockerfile
     healthCheckPath: /api/products
     envVars:
       - key: SPRING_DATASOURCE_URL
-        value: jdbc:postgresql://vantair-postgres:5432/vantair
+        fromDatabase:
+          name: vantair-db
+          property: connectionString
       - key: SPRING_DATASOURCE_USERNAME
-        value: postgres
+        fromDatabase:
+          name: vantair-db
+          property: user
       - key: SPRING_DATASOURCE_PASSWORD
-        fromService:
-          type: pserv
-          name: vantair-postgres
-          envVarKey: POSTGRES_PASSWORD
-      - key: SERVER_PORT
-        value: 8080
+        fromDatabase:
+          name: vantair-db
+          property: password
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
       - key: VANTAIR_CORS_ALLOWED_ORIGINS
-        value: https://vantair.onrender.com
+        value: "*"
 
   # React Frontend (Static Site)
   - type: web
     name: vantair
-    env: static
+    runtime: static
     plan: free
     region: singapore
-    buildCommand: cd VANTAIR-Website-Complete && npm ci && npm run build
-    staticPublishPath: ./VANTAIR-Website-Complete/dist
+    rootDir: VANTAIR-Website-Complete
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
     routes:
       - type: rewrite
         source: /api/*

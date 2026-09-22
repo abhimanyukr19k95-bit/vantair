@@ -52,4 +52,42 @@ class ConfigUnitTest {
         assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
         assertThat(resp.getBody()).containsEntry("message", "boom");
     }
+
+    @Test
+    void databaseEnvironmentPostProcessor_convertsPostgresUrl() {
+        DatabaseEnvironmentPostProcessor processor = new DatabaseEnvironmentPostProcessor();
+        org.springframework.mock.env.MockEnvironment env = new org.springframework.mock.env.MockEnvironment();
+        env.setProperty("SPRING_DATASOURCE_URL", "postgres://user:pass@render-db-host:5432/vantair_db");
+
+        processor.postProcessEnvironment(env, null);
+
+        assertThat(env.getProperty("spring.datasource.url"))
+                .isEqualTo("jdbc:postgresql://render-db-host:5432/vantair_db");
+        assertThat(env.getProperty("spring.datasource.username")).isEqualTo("user");
+        assertThat(env.getProperty("spring.datasource.password")).isEqualTo("pass");
+    }
+
+    @Test
+    void databaseEnvironmentPostProcessor_convertsDatabaseUrl() {
+        DatabaseEnvironmentPostProcessor processor = new DatabaseEnvironmentPostProcessor();
+        org.springframework.mock.env.MockEnvironment env = new org.springframework.mock.env.MockEnvironment();
+        env.setProperty("DATABASE_URL", "postgresql://dbhost/vantair");
+
+        processor.postProcessEnvironment(env, null);
+
+        assertThat(env.getProperty("spring.datasource.url"))
+                .isEqualTo("jdbc:postgresql://dbhost:5432/vantair");
+    }
+
+    @Test
+    void databaseEnvironmentPostProcessor_leavesJdbcUrlUnchanged() {
+        DatabaseEnvironmentPostProcessor processor = new DatabaseEnvironmentPostProcessor();
+        org.springframework.mock.env.MockEnvironment env = new org.springframework.mock.env.MockEnvironment();
+        env.setProperty("spring.datasource.url", "jdbc:postgresql://localhost:5432/vantair");
+
+        processor.postProcessEnvironment(env, null);
+
+        assertThat(env.getProperty("spring.datasource.url"))
+                .isEqualTo("jdbc:postgresql://localhost:5432/vantair");
+    }
 }
