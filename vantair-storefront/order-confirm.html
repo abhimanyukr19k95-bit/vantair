@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Order Confirmed — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.confirm-wrap { max-width:640px; margin:60px auto; padding:0 32px; text-align:center; }
+.confirm-icon { width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg,var(--success),#16a34a); display:flex; align-items:center; justify-content:center; font-size:2.2rem; margin:0 auto 24px; box-shadow:0 8px 32px rgba(52,199,89,0.3); }
+.confirm-title { font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; margin-bottom:12px; }
+.confirm-sub { font-size:1rem; color:var(--ink-2); margin-bottom:32px; }
+.order-card { background:var(--surface); border-radius:var(--radius-lg); padding:28px; box-shadow:var(--shadow-md); text-align:left; margin-bottom:24px; }
+.order-detail-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--silver-2); font-size:0.9rem; }
+.order-detail-row:last-child { border-bottom:none; }
+.order-detail-row span:first-child { color:var(--ink-2); }
+.order-detail-row span:last-child { font-weight:600; }
+.otp-notice { background:linear-gradient(135deg,var(--blue),#0055ee); border-radius:var(--radius-lg); padding:24px; color:#fff; margin-bottom:24px; text-align:left; }
+.otp-notice h3 { font-size:1rem; font-weight:700; margin-bottom:8px; }
+.otp-notice p { font-size:0.84rem; opacity:0.85; line-height:1.65; }
+.confirm-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+<div class="confirm-wrap" id="confirm-content">
+  <div style="padding:80px;text-align:center;color:var(--ink-3);">Loading...</div>
+</div>
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  let order = null;
+  try { order = await api.getOrder(id); } catch (e) {}
+  if (!order) { document.getElementById('confirm-content').innerHTML = '<p>Order not found.</p>'; return; }
+  document.getElementById('confirm-content').innerHTML = `
+    <div class="confirm-icon">✓</div>
+    <h1 class="confirm-title">Order Confirmed! 🎉</h1>
+    <p class="confirm-sub">Thank you for shopping with Vantair. Your order has been placed successfully.</p>
+    <div class="order-card">
+      <div class="order-detail-row"><span>Order ID</span><span>#${order.id}</span></div>
+      <div class="order-detail-row"><span>Items</span><span>${order.items.length} product${order.items.length>1?'s':''}</span></div>
+      <div class="order-detail-row"><span>Total Paid</span><span>${formatPrice(order.total)}</span></div>
+      <div class="order-detail-row"><span>Payment</span><span>${order.payment === 'upi' ? '📱 UPI' : order.payment === 'coupon' ? '🎟️ Coupon / Store Credit' : '💵 Cash on Delivery'}</span></div>
+      ${order.couponCode ? `<div class="order-detail-row"><span>Coupon Applied</span><span>${order.couponCode}</span></div>` : ''}
+      <div class="order-detail-row"><span>Delivery To</span><span>${order.address.city}, ${order.address.pincode}</span></div>
+      <div class="order-detail-row"><span>Expected By</span><span>${order.expectedDelivery}</span></div>
+      <div class="order-detail-row"><span>Tracking ID</span><span>${order.trackingId}</span></div>
+      <div class="order-detail-row"><span>Delivery Partner</span><span>${order.deliveryPartner}</span></div>
+    </div>
+    <div class="otp-notice">
+      <h3>🔐 Your Delivery OTP is Ready</h3>
+      <p>A secure 6-digit OTP has been generated for your delivery. View it securely in your <strong>My Orders</strong> section. You'll need to show it to the delivery agent to confirm your identity.</p>
+    </div>
+    <div class="confirm-actions">
+      <a href="account.html#orders" class="btn btn-primary">View My Orders</a>
+      <a href="track.html?id=${order.id}" class="btn btn-secondary">Track Order</a>
+      <a href="shop.html" class="btn btn-ghost">Continue Shopping</a>
+    </div>`;
+});
+</script>
+</body>
+</html>

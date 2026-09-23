@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Partner With Us — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.partner-hero { background:linear-gradient(135deg,#001a80,#0033CC); padding:100px 32px; text-align:center; color:#fff; }
+.partner-hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3.5rem); font-weight:700; margin-bottom:16px; }
+.partner-hero p { font-size:1.05rem; opacity:0.8; max-width:560px; margin:0 auto; line-height:1.75; }
+.partner-types { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; margin-bottom:48px; }
+.partner-type-card { background:var(--surface); border-radius:var(--radius-xl); padding:36px; box-shadow:var(--shadow-sm); border:2px solid transparent; cursor:pointer; transition:all var(--transition); }
+.partner-type-card:hover,.partner-type-card.selected { border-color:var(--blue); background:var(--blue-light); }
+.partner-type-icon { font-size:2.5rem; margin-bottom:16px; }
+.partner-type-title { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; margin-bottom:10px; }
+.partner-type-desc { font-size:0.86rem; color:var(--ink-2); line-height:1.65; }
+.benefits-list-partner { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:48px; }
+.benefit-item { display:flex; gap:14px; align-items:flex-start; background:var(--surface); border-radius:var(--radius-md); padding:20px; box-shadow:var(--shadow-sm); }
+.benefit-icon { font-size:1.5rem; flex-shrink:0; }
+.benefit-title { font-weight:600; font-size:0.92rem; margin-bottom:4px; }
+.benefit-desc { font-size:0.8rem; color:var(--ink-2); line-height:1.55; }
+@media(max-width:768px){ .partner-types{grid-template-columns:1fr;} .benefits-list-partner{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+
+<div class="partner-hero">
+  <p class="section-label" style="color:#93c5fd;">Business Partnership</p>
+  <h1>Grow Your Business<br>with Vantair</h1>
+  <p>Whether you're a retailer, distributor, corporate buyer or online reseller — Vantair has a partnership model designed for you.</p>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:40px;">
+      <p class="section-label">Partnership Models</p>
+      <h2 class="section-title">Choose How You Work With Us</h2>
+    </div>
+    <div class="partner-types" id="partner-types">
+      <div class="partner-type-card selected" onclick="selectPartnerType('b2b',this)">
+        <div class="partner-type-icon">🏢</div>
+        <div class="partner-type-title">B2B Wholesale</div>
+        <p class="partner-type-desc">Purchase Vantair products in bulk at wholesale prices for your retail store, pharmacy or distribution network. Minimum order quantities apply.</p>
+        <ul style="font-size:0.82rem;color:var(--blue);margin-top:12px;padding-left:16px;">
+          <li>Wholesale pricing</li>
+          <li>Dedicated account manager</li>
+          <li>Priority stock allocation</li>
+        </ul>
+      </div>
+      <div class="partner-type-card" onclick="selectPartnerType('d2b',this)">
+        <div class="partner-type-icon">🚚</div>
+        <div class="partner-type-title">D2B Direct Supply</div>
+        <p class="partner-type-desc">Direct supply to your business location — offices, hotels, spas, salons and corporate gifting programmes. Custom branding options available.</p>
+        <ul style="font-size:0.82rem;color:var(--blue);margin-top:12px;padding-left:16px;">
+          <li>Direct delivery to premises</li>
+          <li>Custom packaging available</li>
+          <li>Recurring supply contracts</li>
+        </ul>
+      </div>
+      <div class="partner-type-card" onclick="selectPartnerType('reseller',this)">
+        <div class="partner-type-icon">💻</div>
+        <div class="partner-type-title">Online Reseller</div>
+        <p class="partner-type-desc">Resell Vantair products on Amazon, Flipkart, Meesho or your own website. We provide product assets, descriptions and support.</p>
+        <ul style="font-size:0.82rem;color:var(--blue);margin-top:12px;padding-left:16px;">
+          <li>Reseller discount pricing</li>
+          <li>Product images & content</li>
+          <li>Marketing support</li>
+        </ul>
+      </div>
+      <div class="partner-type-card" onclick="selectPartnerType('corporate',this)">
+        <div class="partner-type-icon">🎁</div>
+        <div class="partner-type-title">Corporate Gifting</div>
+        <p class="partner-type-desc">Premium Vantair gift sets for employee rewards, client gifting and festive occasions. Custom gift packaging with your company branding.</p>
+        <ul style="font-size:0.82rem;color:var(--blue);margin-top:12px;padding-left:16px;">
+          <li>Custom gift packaging</li>
+          <li>Company logo on packaging</li>
+          <li>Bulk discounts available</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-bottom:40px;">
+      <p class="section-label">Why Partner With Us</p>
+      <h2 class="section-title" style="margin-bottom:32px;">Partner Benefits</h2>
+      <div class="benefits-list-partner">
+        <div class="benefit-item reveal"><div class="benefit-icon">💰</div><div><div class="benefit-title">Competitive Margins</div><p class="benefit-desc">Attractive wholesale pricing that gives you healthy margins across all product categories.</p></div></div>
+        <div class="benefit-item reveal"><div class="benefit-icon">📦</div><div><div class="benefit-title">Low Minimum Orders</div><p class="benefit-desc">Flexible MOQs designed to work for businesses of all sizes — from small retailers to large distributors.</p></div></div>
+        <div class="benefit-item reveal"><div class="benefit-icon">🎨</div><div><div class="benefit-title">Marketing Support</div><p class="benefit-desc">Product images, descriptions, banners and social media assets provided to help you sell faster.</p></div></div>
+        <div class="benefit-item reveal"><div class="benefit-icon">🚀</div><div><div class="benefit-title">Fast Fulfilment</div><p class="benefit-desc">Quick turnaround on bulk orders with reliable logistics partners across India.</p></div></div>
+        <div class="benefit-item reveal"><div class="benefit-icon">🤝</div><div><div class="benefit-title">Dedicated Support</div><p class="benefit-desc">A dedicated Vantair business manager for every partner account. One call for everything.</p></div></div>
+        <div class="benefit-item reveal"><div class="benefit-icon">📊</div><div><div class="benefit-title">Growth Partnership</div><p class="benefit-desc">We grow when you grow. Our team actively supports your sales with product training and market insights.</p></div></div>
+      </div>
+    </div>
+
+    <!-- PARTNER ENQUIRY FORM -->
+    <div class="reveal" style="background:var(--surface);border-radius:var(--radius-xl);padding:48px;box-shadow:var(--shadow-md);max-width:800px;margin:0 auto;">
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;margin-bottom:8px;text-align:center;">Partner Enquiry Form</h3>
+      <p style="font-size:0.86rem;color:var(--ink-2);text-align:center;margin-bottom:32px;">Fill in your details and our business team will contact you within 2 business days.</p>
+      <input type="hidden" id="partner-type-val" value="B2B Wholesale">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name *</label><input type="text" id="p-name" placeholder="Your full name"></div>
+        <div class="form-group"><label>Company / Business *</label><input type="text" id="p-company" placeholder="Company or business name"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Email *</label><input type="email" id="p-email" placeholder="business@company.com"></div>
+        <div class="form-group"><label>Phone *</label><input type="tel" id="p-phone" placeholder="+91 XXXXX XXXXX"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>City</label><input type="text" id="p-city" placeholder="Your city"></div>
+        <div class="form-group"><label>Expected Monthly Volume</label>
+          <select id="p-volume">
+            <option>Below ₹10,000</option>
+            <option>₹10,000 – ₹50,000</option>
+            <option>₹50,000 – ₹2,00,000</option>
+            <option>₹2,00,000 – ₹10,00,000</option>
+            <option>Above ₹10,00,000</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Product Categories of Interest</label>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.84rem;text-transform:none;letter-spacing:0;color:var(--ink);"><input type="checkbox" value="perfumes" style="accent-color:var(--blue);"> Perfumes</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.84rem;text-transform:none;letter-spacing:0;color:var(--ink);"><input type="checkbox" value="toiletries" style="accent-color:var(--blue);"> Toiletries</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.84rem;text-transform:none;letter-spacing:0;color:var(--ink);"><input type="checkbox" value="skincare" style="accent-color:var(--blue);"> Skin Care</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.84rem;text-transform:none;letter-spacing:0;color:var(--ink);"><input type="checkbox" value="cosmetics" style="accent-color:var(--blue);"> Cosmetics</label>
+        </div>
+      </div>
+      <div class="form-group"><label>Tell Us About Your Business</label><textarea id="p-message" placeholder="Describe your business, current product range, customer base and what you're looking for from Vantair..."></textarea></div>
+      <div id="partner-success" style="display:none;background:#d1fae5;border-radius:var(--radius-md);padding:16px;margin-bottom:16px;font-size:0.88rem;color:#065f46;">✅ Enquiry submitted! Our business team will contact you within 2 business days.</div>
+      <button class="btn btn-primary btn-full btn-lg" onclick="submitPartnerEnquiry()">Submit Partnership Enquiry →</button>
+    </div>
+  </div>
+</section>
+
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script>
+function selectPartnerType(type, el) {
+  document.querySelectorAll('.partner-type-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  const labels = { b2b:'B2B Wholesale', d2b:'D2B Direct Supply', reseller:'Online Reseller', corporate:'Corporate Gifting' };
+  document.getElementById('partner-type-val').value = labels[type];
+}
+async function submitPartnerEnquiry() {
+  const name = document.getElementById('p-name').value.trim();
+  const company = document.getElementById('p-company').value.trim();
+  const email = document.getElementById('p-email').value.trim();
+  const phone = document.getElementById('p-phone').value.trim();
+  if (!name || !company || !email || !phone) { showToast('Please fill in all required fields', 'error'); return; }
+  const cats = [...document.querySelectorAll('input[type=checkbox]:checked')].map(c => c.value);
+
+  // Fold city + selected categories into the message (the API stores name/company/email/phone/type/volume/message).
+  const city = document.getElementById('p-city').value.trim();
+  let message = document.getElementById('p-message').value.trim();
+  const extras = [];
+  if (city) extras.push('City: ' + city);
+  if (cats.length) extras.push('Categories: ' + cats.join(', '));
+  if (extras.length) message = (message ? message + '\n\n' : '') + extras.join('\n');
+
+  try {
+    await api.sendPartner({
+      name, company, email, phone,
+      type: document.getElementById('partner-type-val').value,
+      volume: document.getElementById('p-volume').value,
+      message,
+    });
+    document.getElementById('partner-success').style.display = 'block';
+    showToast('Enquiry submitted!', 'success');
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+}
+</script>
+</body>
+</html>

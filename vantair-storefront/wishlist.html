@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Wishlist — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+<div class="page-header"><h1>My Wishlist ❤️</h1><p>Products you love, saved for later</p></div>
+<div class="breadcrumb"><a href="index.html">Home</a><span>›</span><span>Wishlist</span></div>
+<div class="section">
+  <div class="container">
+    <div class="grid-4" id="wishlist-grid"></div>
+    <div id="wishlist-empty" style="display:none;" class="empty-state">
+      <div class="empty-icon">💔</div>
+      <h3>Your wishlist is empty</h3>
+      <p>Save products you love by clicking the heart icon</p>
+      <a href="shop.html" class="btn btn-primary">Shop Now</a>
+    </div>
+  </div>
+</div>
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script>
+function renderWishlist() {
+  const wl = getWishlist();
+  const grid = document.getElementById('wishlist-grid');
+  const empty = document.getElementById('wishlist-empty');
+  if (wl.length === 0) { grid.style.display='none'; empty.style.display='block'; return; }
+  grid.innerHTML = wl.map(id => {
+    const p = getProductById(id);
+    if (!p) return '';
+    const disc = Math.round((1-p.price/p.mrp)*100);
+    return `
+      <div class="product-card">
+        <div class="product-card-img" style="background:${p.color}20;min-height:200px;">
+          <div class="product-card-emoji">${p.emoji}</div>
+          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+          <button class="wishlist-btn active" onclick="removeFromWL('${p.id}',this)">❤️</button>
+        </div>
+        <div class="product-card-body">
+          <div class="product-card-cat">${p.categoryLabel}</div>
+          <div class="product-card-name">${p.name}</div>
+          <div class="product-card-tagline">${p.tagline}</div>
+          <div class="product-card-price">
+            <span class="price-main">${formatPrice(p.price)}</span>
+            <span class="price-mrp">${formatPrice(p.mrp)}</span>
+            <span class="price-off">${disc}% off</span>
+          </div>
+          <div class="product-card-actions">
+            <a href="product.html?id=${p.id}" class="btn btn-secondary btn-sm">View</a>
+            <button class="btn btn-primary btn-sm" onclick="addToCart('${p.id}',0,1);showToast('Added to cart!','success')">+ Cart</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+function removeFromWL(id) {
+  toggleWishlist(id);
+  renderWishlist();
+  showToast('Removed from wishlist');
+}
+document.addEventListener('DOMContentLoaded', renderWishlist);
+document.addEventListener('vantair:catalog', renderWishlist);
+</script>
+</body>
+</html>

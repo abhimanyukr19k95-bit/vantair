@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Shop — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.shop-layout { display:grid; grid-template-columns:260px 1fr; gap:32px; max-width:1200px; margin:0 auto; padding:32px; align-items:start; }
+.shop-sidebar { background:var(--surface); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-sm); position:sticky; top:80px; }
+.filter-title { font-size:0.76rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-2); margin-bottom:12px; margin-top:20px; }
+.filter-title:first-child { margin-top:0; }
+.filter-option { display:flex; align-items:center; gap:10px; padding:8px 0; cursor:pointer; }
+.filter-option input[type=checkbox] { accent-color:var(--blue); width:16px; height:16px; cursor:pointer; }
+.filter-option label { font-size:0.88rem; color:var(--ink); cursor:pointer; }
+.filter-option:hover label { color:var(--blue); }
+.price-range { display:flex; gap:8px; align-items:center; margin-top:8px; }
+.price-range input { width:80px; padding:7px 10px; border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-sm); font-size:0.84rem; }
+.clear-filters { width:100%; margin-top:20px; }
+
+.shop-main {}
+.shop-topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+.shop-count { font-size:0.88rem; color:var(--ink-2); }
+.sort-select { padding:9px 14px; border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-md); font-size:0.85rem; outline:none; background:var(--surface); cursor:pointer; }
+.sort-select:focus { border-color:var(--blue); }
+.search-bar { display:flex; gap:10px; margin-bottom:20px; }
+.search-bar input { flex:1; padding:11px 16px; border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-pill); font-size:0.9rem; outline:none; }
+.search-bar input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(0,51,204,0.1); }
+
+.no-results { text-align:center; padding:60px 20px; }
+.no-results .icon { font-size:3rem; margin-bottom:16px; }
+
+@media(max-width:768px){
+  .shop-layout { grid-template-columns:1fr; padding:16px; }
+  .shop-sidebar { position:static; }
+  #filter-panel { display:none; }
+  #filter-panel.open { display:block; }
+}
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+
+<div class="page-header">
+  <h1>Shop All Products</h1>
+  <p>Discover premium Vantair products across all categories</p>
+</div>
+
+<div class="breadcrumb">
+  <a href="index.html">Home</a><span>›</span><span>Shop</span>
+</div>
+
+<div class="tabs" style="padding:0 32px;max-width:1200px;margin:0 auto 0;" id="cat-tabs">
+  <button class="tab-btn active" data-cat="all" onclick="setCategory('all',this)">All Products</button>
+  <button class="tab-btn" data-cat="perfumes"   onclick="setCategory('perfumes',this)">🌸 Perfumes</button>
+  <button class="tab-btn" data-cat="toiletries" onclick="setCategory('toiletries',this)">🚿 Toiletries</button>
+  <button class="tab-btn" data-cat="skincare"   onclick="setCategory('skincare',this)">✨ Skin Care</button>
+  <button class="tab-btn" data-cat="cosmetics"  onclick="setCategory('cosmetics',this)">💄 Cosmetics</button>
+</div>
+
+<div class="shop-layout">
+  <!-- SIDEBAR FILTERS -->
+  <aside class="shop-sidebar">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <h3 style="font-size:0.95rem;font-weight:600;">Filters</h3>
+      <button onclick="clearFilters()" style="font-size:0.76rem;color:var(--blue);background:none;border:none;cursor:pointer;">Clear All</button>
+    </div>
+    <div id="filter-panel">
+      <div class="filter-title">Category</div>
+      <div class="filter-option"><input type="checkbox" id="f-perf" value="perfumes" onchange="applyFilters()"><label for="f-perf">Perfumes (8)</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-toil" value="toiletries" onchange="applyFilters()"><label for="f-toil">Toiletries (8)</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-skin" value="skincare" onchange="applyFilters()"><label for="f-skin">Skin Care (8)</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-cosm" value="cosmetics" onchange="applyFilters()"><label for="f-cosm">Cosmetics (8)</label></div>
+
+      <div class="filter-title">Price Range</div>
+      <div class="price-range">
+        <input type="number" id="f-min" placeholder="Min" min="0" onchange="applyFilters()">
+        <span>–</span>
+        <input type="number" id="f-max" placeholder="Max" min="0" onchange="applyFilters()">
+      </div>
+
+      <div class="filter-title">Rating</div>
+      <div class="filter-option"><input type="checkbox" id="f-r4" value="4" onchange="applyFilters()"><label for="f-r4">4★ & above</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-r45" value="4.5" onchange="applyFilters()"><label for="f-r45">4.5★ & above</label></div>
+
+      <div class="filter-title">Special</div>
+      <div class="filter-option"><input type="checkbox" id="f-express" value="express" onchange="applyFilters()"><label for="f-express">Express Eligible</label></div>
+      <div class="filter-option"><input type="checkbox" id="f-badge" value="badge" onchange="applyFilters()"><label for="f-badge">Bestsellers Only</label></div>
+    </div>
+  </aside>
+
+  <!-- MAIN PRODUCT GRID -->
+  <main class="shop-main">
+    <div id="ad-slot-shop" style="margin-bottom:20px;"></div>
+    <div class="search-bar">
+      <input type="text" id="search-input" placeholder="🔍 Search products..." oninput="applyFilters()">
+    </div>
+    <div class="shop-topbar">
+      <span class="shop-count" id="product-count">Showing 32 products</span>
+      <select class="sort-select" id="sort-select" onchange="applyFilters()">
+        <option value="default">Sort: Featured</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating">Highest Rated</option>
+        <option value="newest">Newest First</option>
+        <option value="discount">Best Discount</option>
+      </select>
+    </div>
+    <div class="grid-3" id="product-grid"></div>
+    <div id="no-results" class="no-results" style="display:none;">
+      <div class="icon">🔍</div>
+      <h3>No products found</h3>
+      <p>Try adjusting your search or filters</p>
+      <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+    </div>
+  </main>
+</div>
+
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script>
+let activeCategory = 'all';
+
+function setCategory(cat, btn) {
+  activeCategory = cat;
+  document.querySelectorAll('#cat-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  let products = [...VANTAIR.products];
+
+  // Category tab
+  if (activeCategory !== 'all') {
+    products = products.filter(p => p.category === activeCategory);
+  }
+
+  // Checkbox categories
+  const checkedCats = [...document.querySelectorAll('#filter-panel input[type=checkbox][value^=p], #filter-panel input[type=checkbox][value=toiletries], #filter-panel input[type=checkbox][value=skincare], #filter-panel input[type=checkbox][value=cosmetics]')]
+    .filter(c => c.checked).map(c => c.value);
+  if (checkedCats.length > 0 && activeCategory === 'all') {
+    products = products.filter(p => checkedCats.includes(p.category));
+  }
+
+  // Search
+  const q = document.getElementById('search-input').value.toLowerCase().trim();
+  if (q) products = products.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    p.tagline.toLowerCase().includes(q) ||
+    p.description.toLowerCase().includes(q) ||
+    p.categoryLabel.toLowerCase().includes(q)
+  );
+
+  // Price
+  const minP = parseFloat(document.getElementById('f-min').value) || 0;
+  const maxP = parseFloat(document.getElementById('f-max').value) || Infinity;
+  if (minP || maxP < Infinity) products = products.filter(p => p.price >= minP && p.price <= maxP);
+
+  // Rating
+  if (document.getElementById('f-r45').checked) products = products.filter(p => p.rating >= 4.5);
+  else if (document.getElementById('f-r4').checked) products = products.filter(p => p.rating >= 4);
+
+  // Express
+  if (document.getElementById('f-express').checked) products = products.filter(p => p.expressEligible);
+
+  // Bestseller
+  if (document.getElementById('f-badge').checked) products = products.filter(p => p.badge === 'Bestseller');
+
+  // Sort
+  const sort = document.getElementById('sort-select').value;
+  if (sort === 'price-asc')  products.sort((a,b) => a.price - b.price);
+  if (sort === 'price-desc') products.sort((a,b) => b.price - a.price);
+  if (sort === 'rating')     products.sort((a,b) => b.rating - a.rating);
+  if (sort === 'discount')   products.sort((a,b) => (1-b.price/b.mrp) - (1-a.price/a.mrp));
+
+  renderProducts(products);
+}
+
+function renderProducts(products) {
+  const grid = document.getElementById('product-grid');
+  const noRes = document.getElementById('no-results');
+  const count = document.getElementById('product-count');
+
+  count.textContent = `Showing ${products.length} product${products.length !== 1 ? 's' : ''}`;
+
+  if (products.length === 0) {
+    grid.innerHTML = '';
+    noRes.style.display = 'block';
+    return;
+  }
+  noRes.style.display = 'none';
+  grid.innerHTML = products.map(p => buildProductCard(p)).join('');
+}
+
+function buildProductCard(p) {
+  const disc = Math.round((1 - p.price/p.mrp)*100);
+  const inWL = isInWishlist(p.id);
+  return `
+    <div class="product-card">
+      <div class="product-card-img" style="background:${p.color}20;min-height:200px;">
+        <div class="product-card-emoji">${p.emoji}</div>
+        ${p.badge ? `<span class="product-badge ${p.badge==='Premium'?'gold':''}">${p.badge}</span>` : ''}
+        ${p.expressEligible ? `<span class="product-badge green" style="top:10px;left:auto;right:10px;">⚡ Express</span>` : ''}
+        <button class="wishlist-btn ${inWL?'active':''}" onclick="handleWishlist('${p.id}',this)">${inWL?'❤️':'♡'}</button>
+      </div>
+      <div class="product-card-body">
+        <div class="product-card-cat">${p.categoryLabel}</div>
+        <div class="rating-row">
+          <span class="stars">${'★'.repeat(Math.floor(p.rating))}</span>
+          <span class="rating-count">${p.rating} (${p.reviews})</span>
+        </div>
+        <div class="product-card-name">${p.name}</div>
+        <div class="product-card-tagline">${p.tagline}</div>
+        <div class="product-card-price">
+          <span class="price-main">${formatPrice(p.price)}</span>
+          <span class="price-mrp">${formatPrice(p.mrp)}</span>
+          <span class="price-off">${disc}% off</span>
+        </div>
+        <div class="product-card-actions">
+          <a href="product.html?id=${p.id}" class="btn btn-secondary btn-sm">View Details</a>
+          <button class="btn btn-primary btn-sm" onclick="handleAddToCart('${p.id}')">+ Cart</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function handleWishlist(id, btn) {
+  const added = toggleWishlist(id);
+  btn.innerHTML = added ? '❤️' : '♡';
+  btn.classList.toggle('active', added);
+  showToast(added ? '❤️ Added to wishlist' : 'Removed from wishlist', added ? 'success' : 'default');
+}
+
+function handleAddToCart(id) {
+  addToCart(id, 0, 1);
+  showToast('🛒 Added to cart!', 'success');
+}
+
+function clearFilters() {
+  document.querySelectorAll('#filter-panel input[type=checkbox]').forEach(c => c.checked = false);
+  document.getElementById('f-min').value = '';
+  document.getElementById('f-max').value = '';
+  document.getElementById('search-input').value = '';
+  document.getElementById('sort-select').value = 'default';
+  activeCategory = 'all';
+  document.querySelectorAll('#cat-tabs .tab-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  applyFilters();
+}
+
+// Check URL params
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get('cat');
+  const search = params.get('search');
+  if (cat) {
+    activeCategory = cat;
+    document.querySelectorAll('#cat-tabs .tab-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.cat === cat);
+    });
+  }
+  if (search) {
+    document.getElementById('search-input').value = search;
+  }
+  applyFilters();
+});
+// Re-render the grid when the live catalog arrives from the API.
+document.addEventListener('vantair:catalog', applyFilters);
+</script>
+</body>
+</html>

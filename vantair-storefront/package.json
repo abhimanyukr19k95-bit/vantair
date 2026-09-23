@@ -1,0 +1,12 @@
+{
+  "name": "vantair-storefront",
+  "version": "1.0.0",
+  "description": "Static storefront for Vantair with a zero-dependency server that proxies /api to the Spring Boot backend.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

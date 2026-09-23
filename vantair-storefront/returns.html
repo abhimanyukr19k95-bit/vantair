@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Returns & Refunds — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.returns-wrap { max-width:900px; margin:0 auto; padding:60px 32px; }
+.policy-step { display:flex; gap:20px; align-items:flex-start; background:var(--surface); border-radius:var(--radius-lg); padding:24px; margin-bottom:16px; box-shadow:var(--shadow-sm); }
+.policy-step-num { width:44px; height:44px; border-radius:50%; background:var(--blue); color:#fff; font-size:1rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.policy-step-content h4 { font-size:1rem; font-weight:600; margin-bottom:6px; }
+.policy-step-content p { font-size:0.86rem; color:var(--ink-2); line-height:1.65; }
+.refund-options { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:32px 0; }
+.refund-option { border-radius:var(--radius-lg); padding:28px; text-align:center; }
+.refund-option.bank { background:linear-gradient(135deg,#0033CC,#0055ee); color:#fff; }
+.refund-option.coupon { background:linear-gradient(135deg,#065f46,#047857); color:#fff; }
+.refund-option-icon { font-size:2.5rem; margin-bottom:12px; }
+.refund-option-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; margin-bottom:8px; }
+.refund-option-desc { font-size:0.84rem; opacity:0.85; line-height:1.6; }
+.refund-timeline { display:flex; gap:0; align-items:center; background:var(--surface); border-radius:var(--radius-lg); padding:24px; margin:24px 0; box-shadow:var(--shadow-sm); }
+.rt-step { flex:1; text-align:center; }
+.rt-step-dot { width:32px; height:32px; border-radius:50%; background:var(--blue); color:#fff; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; }
+.rt-step-label { font-size:0.75rem; color:var(--ink-2); font-weight:500; }
+.rt-arrow { font-size:1.2rem; color:var(--ink-3); flex-shrink:0; }
+@media(max-width:600px){ .refund-options{grid-template-columns:1fr;} .refund-timeline{flex-direction:column;gap:12px;} .rt-arrow{transform:rotate(90deg);} }
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+
+<div class="page-header">
+  <h1>Returns & Refunds</h1>
+  <p>Our commitment to your complete satisfaction</p>
+</div>
+
+<div class="returns-wrap">
+
+  <div class="reveal" style="background:linear-gradient(135deg,var(--blue),#0055ee);border-radius:var(--radius-xl);padding:40px;color:#fff;margin-bottom:48px;text-align:center;">
+    <div style="font-size:3rem;margin-bottom:16px;">📦</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:12px;">Open Box Delivery Promise</h2>
+    <p style="font-size:0.95rem;opacity:0.85;max-width:560px;margin:0 auto;line-height:1.75;">Every Vantair order is delivered with open box inspection. You can check your product in front of the delivery agent before accepting. Not satisfied? Return it instantly — no forms, no waiting.</p>
+  </div>
+
+  <div class="reveal" style="margin-bottom:48px;">
+    <p class="section-label">How It Works</p>
+    <h2 class="section-title" style="margin-bottom:28px;">Return Process</h2>
+    <div class="policy-step reveal">
+      <div class="policy-step-num">1</div>
+      <div class="policy-step-content">
+        <h4>📦 Open Box Inspection</h4>
+        <p>When your delivery agent arrives, you can open the package and inspect the product before providing your OTP. Take your time — the agent will wait.</p>
+      </div>
+    </div>
+    <div class="policy-step reveal">
+      <div class="policy-step-num">2</div>
+      <div class="policy-step-content">
+        <h4>🔍 Check for Defects</h4>
+        <p>Check the product for any visible damage, leakage, incorrect item or quality issues. Compare with your order details if needed.</p>
+      </div>
+    </div>
+    <div class="policy-step reveal">
+      <div class="policy-step-num">3</div>
+      <div class="policy-step-content">
+        <h4>↩️ Instant Return (if defective)</h4>
+        <p>If the product is damaged or defective, hand it back to the delivery agent immediately. Do not provide your OTP — the agent will mark it as a return. No additional steps required from you.</p>
+      </div>
+    </div>
+    <div class="policy-step reveal">
+      <div class="policy-step-num">4</div>
+      <div class="policy-step-content">
+        <h4>✅ Accept (if satisfied)</h4>
+        <p>If you are happy with the product, provide your OTP to the delivery agent to confirm receipt. Once the OTP is accepted, the delivery is complete and the product cannot be returned.</p>
+      </div>
+    </div>
+    <div class="policy-step reveal">
+      <div class="policy-step-num">5</div>
+      <div class="policy-step-content">
+        <h4>💰 Refund Processed</h4>
+        <p>For returned items, your refund is initiated within 1–2 business days and completed within 7 business days to your chosen refund method.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-bottom:48px;">
+    <p class="section-label">Refund Options</p>
+    <h2 class="section-title" style="margin-bottom:28px;">Choose Your Refund Method</h2>
+    <div class="refund-options">
+      <div class="refund-option bank reveal">
+        <div class="refund-option-icon">🏦</div>
+        <div class="refund-option-title">Bank Refund</div>
+        <p class="refund-option-desc">Full refund to your original payment method (UPI/bank account). Available for UPI-paid orders. Processed within 7 business days.</p>
+      </div>
+      <div class="refund-option coupon reveal">
+        <div class="refund-option-icon">🎟️</div>
+        <div class="refund-option-title">Refund Coupon</div>
+        <p class="refund-option-desc">Get a coupon code credited to your Vantair dashboard instantly. Use it on your next order. Available for all payment methods including COD.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="reveal" style="margin-bottom:48px;">
+    <p class="section-label">Refund Timeline</p>
+    <h2 class="section-title" style="margin-bottom:24px;">When Will I Get My Refund?</h2>
+    <div class="refund-timeline">
+      <div class="rt-step"><div class="rt-step-dot">1</div><div class="rt-step-label">Return accepted at delivery</div></div>
+      <div class="rt-arrow">→</div>
+      <div class="rt-step"><div class="rt-step-dot">2</div><div class="rt-step-label">Refund initiated (1–2 days)</div></div>
+      <div class="rt-arrow">→</div>
+      <div class="rt-step"><div class="rt-step-dot">3</div><div class="rt-step-label">Bank refund (7 business days)</div></div>
+      <div class="rt-arrow">→</div>
+      <div class="rt-step"><div class="rt-step-dot">✓</div><div class="rt-step-label">Coupon: credited instantly</div></div>
+    </div>
+  </div>
+
+  <div class="reveal" style="background:var(--surface);border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-sm);margin-bottom:48px;">
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:16px;">Important Notes</h3>
+    <ul style="padding-left:20px;">
+      <li style="font-size:0.88rem;color:var(--ink-2);line-height:1.75;margin-bottom:8px;">Returns are only accepted at the time of delivery during open box inspection</li>
+      <li style="font-size:0.88rem;color:var(--ink-2);line-height:1.75;margin-bottom:8px;">Once the Delivery OTP is provided and accepted, the order is considered delivered and no returns are accepted</li>
+      <li style="font-size:0.88rem;color:var(--ink-2);line-height:1.75;margin-bottom:8px;">Cosmetics and personal care products cannot be returned after use for hygiene reasons</li>
+      <li style="font-size:0.88rem;color:var(--ink-2);line-height:1.75;margin-bottom:8px;">For COD orders, refunds are issued as coupon codes credited to your dashboard</li>
+      <li style="font-size:0.88rem;color:var(--ink-2);line-height:1.75;margin-bottom:8px;">Orders cancelled before dispatch are eligible for a full refund to the original payment method</li>
+      <li style="font-size:0.88rem;color:var(--ink-2);line-height:1.75;">Refund coupons have no expiry date and can be used on any future Vantair order</li>
+    </ul>
+  </div>
+
+  <div class="reveal" style="text-align:center;background:var(--bg);border-radius:var(--radius-lg);padding:32px;">
+    <h3 style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;">Need Help With a Return?</h3>
+    <p style="font-size:0.86rem;color:var(--ink-2);margin-bottom:20px;">Our support team is available Mon–Sat, 10 AM to 7 PM IST</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="contact.html" class="btn btn-primary">Contact Support</a>
+      <a href="https://wa.me/919088841800" target="_blank" class="btn btn-secondary">💬 WhatsApp</a>
+      <a href="faq.html" class="btn btn-ghost">View FAQ</a>
+    </div>
+  </div>
+</div>
+
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+</body>
+</html>

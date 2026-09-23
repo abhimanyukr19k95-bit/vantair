@@ -1,0 +1,69 @@
+================================================
+  VANTAIR — QUICK SETUP GUIDE
+================================================
+
+STEP 1: TEST LOCALLY
+----------------------
+1. Extract ZIP folder
+2. Open index.html in Chrome/Firefox
+3. Browse all pages
+4. Test cart & checkout
+5. Test admin panel (admin/vantair2025)
+
+STEP 2: BUY HOSTING
+----------------------
+Go to: hostinger.com
+Plan: Premium Shared Hosting
+Cost: ~₹69/month
+Get: Free SSL + Email included
+
+STEP 3: UPLOAD FILES
+----------------------
+1. Login to Hostinger
+2. Go to File Manager
+3. Open public_html folder
+4. Upload ALL files from vantair folder
+5. Ensure index.html is in root
+
+STEP 4: CONNECT DOMAIN
+----------------------
+1. Login to domain registrar
+2. Go to DNS/Nameservers
+3. Update to Hostinger nameservers
+4. Wait 24-48 hours
+
+STEP 5: ADD CLOUDFLARE (FREE)
+----------------------
+1. Go to cloudflare.com
+2. Add site: vantair.in
+3. Update nameservers to Cloudflare
+4. Enable Auto HTTPS
+5. Done! Fast updates anytime
+
+STEP 6: BACKEND (WITH CLAUDE)
+----------------------
+Come back to Claude and say:
+"I have my Firebase API keys ready"
+
+Claude will connect:
+- Firebase (database)
+- Razorpay (payments)
+- MSG91 (SMS OTP)
+- Shiprocket (tracking)
+
+STEP 7: GO LIVE!
+----------------------
+After all integrations:
+Download final ZIP from Claude
+Upload to hosting
+Vantair is LIVE! 🚀
+
+================================================
+  NEED HELP?
+================================================
+Come back to Claude anytime!
+Just describe what you need.
+
+Email: vantair@zohomail.in
+Phone: +91 90888 41800
+================================================

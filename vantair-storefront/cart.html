@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Cart — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.cart-layout { max-width:1200px; margin:0 auto; padding:40px 32px; display:grid; grid-template-columns:1fr 380px; gap:32px; align-items:start; }
+.cart-items { background:var(--surface); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); overflow:hidden; }
+.cart-header { padding:20px 24px; border-bottom:1px solid var(--silver-2); display:flex; justify-content:space-between; align-items:center; }
+.cart-header h2 { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; }
+.cart-item { display:grid; grid-template-columns:80px 1fr auto; gap:16px; padding:20px 24px; border-bottom:1px solid var(--silver-2); align-items:center; }
+.cart-item:last-child { border-bottom:none; }
+.cart-item-img { width:80px; height:80px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-size:2.5rem; }
+.cart-item-info { }
+.cart-item-name { font-weight:600; font-size:0.95rem; margin-bottom:4px; }
+.cart-item-variant { font-size:0.78rem; color:var(--ink-2); margin-bottom:8px; }
+.cart-item-price { font-size:0.95rem; font-weight:600; color:var(--blue); }
+.cart-item-mrp { font-size:0.76rem; color:var(--ink-3); text-decoration:line-through; margin-left:6px; }
+.cart-item-controls { display:flex; flex-direction:column; align-items:flex-end; gap:12px; }
+.qty-control { display:flex; align-items:center; border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-sm); overflow:hidden; }
+.qty-btn { width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:1rem; cursor:pointer; background:var(--bg); border:none; transition:background var(--transition); }
+.qty-btn:hover { background:var(--blue-light); color:var(--blue); }
+.qty-num { width:36px; text-align:center; font-size:0.88rem; font-weight:600; }
+.remove-btn { font-size:0.76rem; color:var(--ink-3); cursor:pointer; background:none; border:none; transition:color var(--transition); }
+.remove-btn:hover { color:var(--error); }
+.cart-item-total { font-size:0.9rem; font-weight:700; color:var(--ink); }
+
+/* ORDER SUMMARY */
+.order-summary { background:var(--surface); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); padding:24px; position:sticky; top:80px; }
+.summary-title { font-family:'Playfair Display',serif; font-size:1.2rem; font-weight:700; margin-bottom:20px; }
+.summary-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; font-size:0.9rem; border-bottom:1px solid var(--silver-2); }
+.summary-row:last-of-type { border-bottom:none; }
+.summary-row.total { font-weight:700; font-size:1.05rem; color:var(--ink); padding-top:16px; border-top:2px solid var(--silver-2); }
+.summary-row.savings { color:var(--success); font-weight:600; }
+
+.coupon-box { margin:16px 0; background:var(--bg); border-radius:var(--radius-md); padding:16px; }
+.coupon-input-row { display:flex; gap:8px; margin-top:8px; }
+.coupon-input-row input { flex:1; padding:10px 14px; border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-sm); font-size:0.86rem; outline:none; text-transform:uppercase; }
+.coupon-input-row input:focus { border-color:var(--blue); }
+.coupon-input-row button { background:var(--blue); color:#fff; padding:10px 16px; border:none; border-radius:var(--radius-sm); font-size:0.86rem; cursor:pointer; font-weight:500; }
+.coupon-applied { display:flex; align-items:center; justify-content:space-between; background:#d1fae5; border-radius:var(--radius-sm); padding:10px 14px; margin-top:8px; font-size:0.84rem; color:#065f46; }
+.coupon-remove { cursor:pointer; font-size:0.9rem; }
+
+.delivery-options { margin:16px 0; }
+.delivery-opt { display:flex; align-items:center; gap:12px; padding:12px; border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-md); margin-bottom:8px; cursor:pointer; transition:all var(--transition); }
+.delivery-opt.selected { border-color:var(--blue); background:var(--blue-light); }
+.delivery-opt input[type=radio] { accent-color:var(--blue); }
+.delivery-opt-label { flex:1; }
+.delivery-opt-name { font-size:0.88rem; font-weight:600; color:var(--ink); }
+.delivery-opt-date { font-size:0.76rem; color:var(--ink-2); margin-top:2px; }
+.delivery-opt-price { font-size:0.84rem; font-weight:600; color:var(--blue); }
+
+@media(max-width:900px){ .cart-layout { grid-template-columns:1fr; } .order-summary { position:static; } }
+@media(max-width:560px){ .cart-item { grid-template-columns:60px 1fr; } .cart-item-controls { flex-direction:row; align-items:center; grid-column:1/-1; } }
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+
+<div class="breadcrumb">
+  <a href="index.html">Home</a><span>›</span>
+  <a href="shop.html">Shop</a><span>›</span>
+  <span>Cart</span>
+</div>
+
+<div class="progress-steps" style="max-width:600px;margin:20px auto 0;padding:0 32px;">
+  <div class="step-item active"><div class="step-circle">1</div><div class="step-label">Cart</div></div>
+  <div class="step-item"><div class="step-circle">2</div><div class="step-label">Delivery</div></div>
+  <div class="step-item"><div class="step-circle">3</div><div class="step-label">Payment</div></div>
+  <div class="step-item"><div class="step-circle">4</div><div class="step-label">Confirm</div></div>
+</div>
+
+<div class="cart-layout">
+  <!-- CART ITEMS -->
+  <div>
+    <div class="cart-items" id="cart-container">
+      <div class="cart-header">
+        <h2>My Cart (<span id="cart-count">0</span>)</h2>
+        <button onclick="clearCart()" style="font-size:0.8rem;color:var(--error);background:none;border:none;cursor:pointer;">Clear All</button>
+      </div>
+      <div id="cart-items-list"></div>
+    </div>
+
+    <div style="margin-top:20px;background:var(--surface);border-radius:var(--radius-lg);padding:20px 24px;box-shadow:var(--shadow-sm);">
+      <h3 style="font-size:0.9rem;font-weight:600;margin-bottom:16px;">🛡️ Delivery Assurance</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div style="font-size:0.8rem;color:var(--ink-2);display:flex;gap:8px;"><span>📦</span><span><strong style="color:var(--ink);">Open Box Delivery</strong><br>Inspect before accepting</span></div>
+        <div style="font-size:0.8rem;color:var(--ink-2);display:flex;gap:8px;"><span>🔐</span><span><strong style="color:var(--ink);">OTP Verification</strong><br>Secure delivery confirmation</span></div>
+        <div style="font-size:0.8rem;color:var(--ink-2);display:flex;gap:8px;"><span>↩️</span><span><strong style="color:var(--ink);">Instant Return</strong><br>Defective? Return on the spot</span></div>
+        <div style="font-size:0.8rem;color:var(--ink-2);display:flex;gap:8px;"><span>💳</span><span><strong style="color:var(--ink);">7-Day Refund</strong><br>Bank or coupon refund</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER SUMMARY -->
+  <div class="order-summary">
+    <div class="summary-title">Order Summary</div>
+
+    <!-- Pincode -->
+    <div style="margin-bottom:16px;">
+      <label style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-2);display:block;margin-bottom:8px;">Deliver To Pincode</label>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="pincode-field" maxlength="6" placeholder="Enter pincode" style="flex:1;padding:9px 14px;border:1.5px solid rgba(0,0,0,0.1);border-radius:var(--radius-sm);font-size:0.85rem;outline:none;">
+        <button onclick="checkCartPincode()" style="background:var(--blue);color:#fff;padding:9px 14px;border:none;border-radius:var(--radius-sm);font-size:0.84rem;cursor:pointer;">Check</button>
+      </div>
+      <div id="pincode-msg" style="font-size:0.78rem;margin-top:6px;"></div>
+    </div>
+
+    <!-- Delivery Options -->
+    <div class="delivery-options" id="delivery-options" style="display:none;">
+      <div class="delivery-opt selected" id="opt-standard" onclick="selectDelivery('standard')">
+        <input type="radio" name="delivery" checked>
+        <div class="delivery-opt-label">
+          <div class="delivery-opt-name">🚚 Standard Delivery</div>
+          <div class="delivery-opt-date" id="std-date">3–5 business days</div>
+        </div>
+        <div class="delivery-opt-price" id="std-price">₹49</div>
+      </div>
+      <div class="delivery-opt" id="opt-express" onclick="selectDelivery('express')" style="display:none;">
+        <input type="radio" name="delivery">
+        <div class="delivery-opt-label">
+          <div class="delivery-opt-name">⚡ Express — Same Day</div>
+          <div class="delivery-opt-date" id="exp-same-date"></div>
+        </div>
+        <div class="delivery-opt-price">+₹149</div>
+      </div>
+      <div class="delivery-opt" id="opt-express2" onclick="selectDelivery('express2')" style="display:none;">
+        <input type="radio" name="delivery">
+        <div class="delivery-opt-label">
+          <div class="delivery-opt-name">⚡ Express — Next Day</div>
+          <div class="delivery-opt-date" id="exp-next-date"></div>
+        </div>
+        <div class="delivery-opt-price">+₹149</div>
+      </div>
+    </div>
+
+    <!-- Coupon -->
+    <div class="coupon-box">
+      <div style="font-size:0.82rem;font-weight:600;color:var(--ink);">🏷️ Apply Coupon</div>
+      <div id="coupon-applied-box" style="display:none;"></div>
+      <div class="coupon-input-row" id="coupon-input-row">
+        <input type="text" id="coupon-input" placeholder="ENTER CODE" maxlength="20">
+        <button onclick="applyCoupon()">Apply</button>
+      </div>
+      <div id="coupon-msg" style="font-size:0.78rem;margin-top:6px;"></div>
+    </div>
+
+    <!-- Refund Coupons -->
+    <div id="refund-coupons-section" style="display:none;margin-bottom:16px;"></div>
+
+    <!-- Price Breakdown -->
+    <div id="price-breakdown"></div>
+
+    <button class="btn btn-primary btn-full" style="margin-top:20px;" onclick="proceedToCheckout()">
+      Proceed to Checkout →
+    </button>
+    <a href="shop.html" class="btn btn-secondary btn-full" style="margin-top:10px;text-align:center;">Continue Shopping</a>
+  </div>
+</div>
+
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script>
+let appliedCoupon = null;
+let deliveryType = 'standard';
+let cartPincode = '';
+
+function renderCart() {
+  const cart = getCart();
+  const list = document.getElementById('cart-items-list');
+  const countEl = document.getElementById('cart-count');
+  countEl.textContent = getCartCount();
+
+  if (cart.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🛒</div>
+        <h3>Your cart is empty</h3>
+        <p>Add some products to get started</p>
+        <a href="shop.html" class="btn btn-primary">Shop Now</a>
+      </div>`;
+    document.getElementById('price-breakdown').innerHTML = '';
+    return;
+  }
+
+  list.innerHTML = cart.map(item => {
+    const p = getProductById(item.productId);
+    if (!p) return '';
+    const v = p.variants[item.variantIndex || 0];
+    const price = v ? v.price : p.price;
+    return `
+      <div class="cart-item" id="ci-${item.productId}-${item.variantIndex}">
+        <div class="cart-item-img" style="background:${p.color}20;">${p.emoji}</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${p.name}</div>
+          <div class="cart-item-variant">${v ? v.label : ''} · ${p.categoryLabel}</div>
+          <div>
+            <span class="cart-item-price">${formatPrice(price)}</span>
+            <span class="cart-item-mrp">${formatPrice(p.mrp)}</span>
+          </div>
+        </div>
+        <div class="cart-item-controls">
+          <div class="qty-control">
+            <button class="qty-btn" onclick="updateQty('${item.productId}',${item.variantIndex},-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="updateQty('${item.productId}',${item.variantIndex},1)">+</button>
+          </div>
+          <div class="cart-item-total">${formatPrice(price * item.qty)}</div>
+          <button class="remove-btn" onclick="removeItem('${item.productId}',${item.variantIndex})">🗑 Remove</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  renderPriceBreakdown();
+  loadRefundCoupons();
+}
+
+function updateQty(productId, variantIndex, delta) {
+  const cart = getCart();
+  const item = cart.find(i => i.productId === productId && i.variantIndex === variantIndex);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  saveCart(cart);
+  renderCart();
+  updateCartBadge();
+}
+
+function removeItem(productId, variantIndex) {
+  const cart = getCart().filter(i => !(i.productId === productId && i.variantIndex === variantIndex));
+  saveCart(cart);
+  renderCart();
+  updateCartBadge();
+  showToast('Item removed from cart');
+}
+
+function clearCart() {
+  if (!confirm('Clear all items from cart?')) return;
+  saveCart([]);
+  renderCart();
+  updateCartBadge();
+}
+
+function applyCoupon() {
+  const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+  const msg = document.getElementById('coupon-msg');
+  const subtotal = getCartTotal();
+
+  // Check refund coupons
+  const user = getCurrentUser();
+  if (user && user.refundCoupons) {
+    const rc = user.refundCoupons.find(c => c.code === code && !c.used);
+    if (rc) {
+      appliedCoupon = { code: rc.code, type: 'flat', value: rc.value, desc: `Refund Coupon — ₹${rc.value} off` };
+      showCouponApplied();
+      return;
+    }
+  }
+
+  const coupon = VANTAIR.coupons.find(c => c.code === code);
+  if (!coupon) { msg.innerHTML = '<span style="color:var(--error);">Invalid coupon code</span>'; return; }
+  if (subtotal < coupon.minOrder) { msg.innerHTML = `<span style="color:var(--error);">Minimum order ₹${coupon.minOrder} required</span>`; return; }
+  appliedCoupon = coupon;
+  showCouponApplied();
+}
+
+function showCouponApplied() {
+  document.getElementById('coupon-input-row').style.display = 'none';
+  document.getElementById('coupon-msg').innerHTML = '';
+  document.getElementById('coupon-applied-box').style.display = 'flex';
+  document.getElementById('coupon-applied-box').innerHTML = `
+    <div class="coupon-applied">
+      <span>✅ ${appliedCoupon.code} — ${appliedCoupon.desc}</span>
+      <span class="coupon-remove" onclick="removeCoupon()">✕</span>
+    </div>`;
+  renderPriceBreakdown();
+  showToast('🎉 Coupon applied!', 'success');
+}
+
+function removeCoupon() {
+  appliedCoupon = null;
+  document.getElementById('coupon-input-row').style.display = 'flex';
+  document.getElementById('coupon-applied-box').style.display = 'none';
+  document.getElementById('coupon-input').value = '';
+  renderPriceBreakdown();
+}
+
+function loadRefundCoupons() {
+  const user = getCurrentUser();
+  const sec = document.getElementById('refund-coupons-section');
+  if (!user || !user.refundCoupons || user.refundCoupons.filter(c=>!c.used).length === 0) { sec.style.display='none'; return; }
+  const unused = user.refundCoupons.filter(c => !c.used);
+  sec.style.display = 'block';
+  sec.innerHTML = `
+    <div style="font-size:0.82rem;font-weight:600;color:var(--ink);margin-bottom:8px;">🎁 Your Refund Coupons</div>
+    ${unused.map(c => `
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#d1fae5;border-radius:var(--radius-sm);padding:8px 12px;margin-bottom:6px;font-size:0.82rem;">
+        <span style="color:#065f46;font-weight:600;">${c.code} — ₹${c.value} off</span>
+        <button onclick="applyRefundCoupon('${c.code}',${c.value})" style="background:var(--blue);color:#fff;border:none;border-radius:var(--radius-sm);padding:4px 10px;font-size:0.76rem;cursor:pointer;">Apply</button>
+      </div>
+    `).join('')}`;
+}
+
+function applyRefundCoupon(code, value) {
+  appliedCoupon = { code, type:'flat', value, desc:`Refund Coupon — ₹${value} off` };
+  document.getElementById('coupon-input').value = code;
+  showCouponApplied();
+}
+
+function getDiscount() {
+  if (!appliedCoupon) return 0;
+  const subtotal = getCartTotal();
+  if (appliedCoupon.type === 'percent') return Math.round(subtotal * appliedCoupon.value / 100);
+  if (appliedCoupon.type === 'flat') return Math.min(appliedCoupon.value, subtotal);
+  if (appliedCoupon.type === 'shipping') return getDeliveryCharge();
+  return 0;
+}
+
+function getDeliveryCharge() {
+  if (appliedCoupon && appliedCoupon.type === 'shipping') return 0;
+  const subtotal = getCartTotal();
+  if (deliveryType === 'express' || deliveryType === 'express2') return VANTAIR.delivery.expressCharge;
+  if (subtotal >= VANTAIR.delivery.freeAbove) return 0;
+  return VANTAIR.delivery.standardCharge;
+}
+
+function renderPriceBreakdown() {
+  const subtotal = getCartTotal();
+  const savings = getCart().reduce((sum, item) => {
+    const p = getProductById(item.productId);
+    if (!p) return sum;
+    return sum + (p.mrp - (p.variants[item.variantIndex||0]?.price || p.price)) * item.qty;
+  }, 0);
+  const delivery = getDeliveryCharge();
+  const discount = getDiscount();
+  const total = subtotal - discount + delivery;
+
+  document.getElementById('price-breakdown').innerHTML = `
+    <div class="summary-row"><span>Subtotal (${getCartCount()} items)</span><span>${formatPrice(subtotal)}</span></div>
+    ${savings > 0 ? `<div class="summary-row savings"><span>🎉 You Save</span><span>-${formatPrice(savings)}</span></div>` : ''}
+    ${discount > 0 ? `<div class="summary-row savings"><span>Coupon Discount</span><span>-${formatPrice(discount)}</span></div>` : ''}
+    <div class="summary-row"><span>Delivery ${delivery === 0 ? '(Free!)' : ''}</span><span>${delivery === 0 ? '<span style="color:var(--success)">FREE</span>' : formatPrice(delivery)}</span></div>
+    <div class="summary-row total"><span>Total</span><span>${formatPrice(total)}</span></div>
+    ${subtotal < VANTAIR.delivery.freeAbove && deliveryType === 'standard' ? `
+      <div style="background:var(--blue-light);border-radius:var(--radius-sm);padding:10px 14px;margin-top:12px;font-size:0.78rem;color:var(--blue);">
+        Add ${formatPrice(VANTAIR.delivery.freeAbove - subtotal)} more for FREE delivery!
+      </div>` : ''}
+  `;
+
+  // Save summary for checkout
+  localStorage.setItem('vantair_order_summary', JSON.stringify({
+    subtotal, savings, discount, delivery, total,
+    coupon: appliedCoupon, deliveryType
+  }));
+}
+
+function checkCartPincode() {
+  const pin = document.getElementById('pincode-field').value.trim();
+  const msg = document.getElementById('pincode-msg');
+  if (pin.length !== 6 || isNaN(pin)) { msg.innerHTML = '<span style="color:var(--error);">Enter valid 6-digit pincode</span>'; return; }
+  cartPincode = pin;
+  localStorage.setItem('vantair_pincode', pin);
+  const isExpress = isExpressAvailable(pin);
+  const stdDate = getDeliveryDate(pin, false);
+  msg.innerHTML = `<span style="color:var(--success);">✓ Delivery available</span>`;
+  document.getElementById('delivery-options').style.display = 'block';
+  document.getElementById('std-date').textContent = `Estimated by ${stdDate}`;
+  document.getElementById('std-price').textContent = getCartTotal() >= 999 ? 'FREE' : '₹49';
+  if (isExpress) {
+    document.getElementById('opt-express').style.display = 'flex';
+    document.getElementById('opt-express2').style.display = 'flex';
+    document.getElementById('exp-same-date').textContent = getDeliveryDate(pin, true, 'Same Day');
+    document.getElementById('exp-next-date').textContent = getDeliveryDate(pin, true, 'Next Day');
+  }
+  renderPriceBreakdown();
+}
+
+function selectDelivery(type) {
+  deliveryType = type;
+  ['opt-standard','opt-express','opt-express2'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('selected');
+  });
+  const map = { standard:'opt-standard', express:'opt-express', express2:'opt-express2' };
+  if (document.getElementById(map[type])) document.getElementById(map[type]).classList.add('selected');
+  renderPriceBreakdown();
+}
+
+function proceedToCheckout() {
+  if (getCart().length === 0) { showToast('Your cart is empty!', 'error'); return; }
+  window.location.href = 'checkout.html';
+}
+
+document.addEventListener('DOMContentLoaded', renderCart);
+</script>
+</body>
+</html>

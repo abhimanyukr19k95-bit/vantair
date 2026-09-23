@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Checkout — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.checkout-layout { max-width:1100px; margin:0 auto; padding:40px 32px; display:grid; grid-template-columns:1fr 360px; gap:32px; align-items:start; }
+.checkout-section { background:var(--surface); border-radius:var(--radius-lg); padding:28px; box-shadow:var(--shadow-sm); margin-bottom:20px; }
+.checkout-section-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+.section-num { width:28px; height:28px; border-radius:50%; background:var(--blue); color:#fff; font-size:0.8rem; font-weight:700; display:flex; align-items:center; justify-content:center; }
+
+/* ADDRESS CARDS */
+.addr-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.addr-card { border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-md); padding:14px; cursor:pointer; transition:all var(--transition); position:relative; }
+.addr-card.selected { border-color:var(--blue); background:var(--blue-light); }
+.addr-card-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--blue); margin-bottom:6px; }
+.addr-card-name { font-weight:600; font-size:0.88rem; margin-bottom:4px; }
+.addr-card-text { font-size:0.8rem; color:var(--ink-2); line-height:1.5; }
+.addr-check { position:absolute; top:10px; right:10px; color:var(--blue); display:none; }
+.addr-card.selected .addr-check { display:block; }
+
+/* PAYMENT */
+.payment-opts { display:flex; flex-direction:column; gap:12px; }
+.payment-opt { border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-md); overflow:hidden; transition:border-color var(--transition); }
+.payment-opt.selected { border-color:var(--blue); }
+.payment-opt-header { display:flex; align-items:center; gap:14px; padding:16px 20px; cursor:pointer; }
+.payment-opt-header input[type=radio] { accent-color:var(--blue); }
+.payment-opt-icon { font-size:1.4rem; }
+.payment-opt-label { flex:1; }
+.payment-opt-name { font-weight:600; font-size:0.92rem; }
+.payment-opt-desc { font-size:0.76rem; color:var(--ink-2); margin-top:2px; }
+.payment-opt-badge { font-size:0.72rem; background:var(--blue-light); color:var(--blue); padding:3px 8px; border-radius:var(--radius-pill); font-weight:600; }
+.payment-opt-body { padding:16px 20px; border-top:1px solid var(--silver-2); display:none; background:var(--bg); }
+.payment-opt.selected .payment-opt-body { display:block; }
+
+.upi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+.upi-app { border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-md); padding:12px 8px; text-align:center; cursor:pointer; transition:all var(--transition); font-size:0.76rem; font-weight:500; }
+.upi-app:hover, .upi-app.active { border-color:var(--blue); background:var(--blue-light); color:var(--blue); }
+.upi-app-icon { font-size:1.5rem; margin-bottom:4px; }
+.upi-id-input { display:flex; gap:8px; }
+.upi-id-input input { flex:1; padding:10px 14px; border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-sm); font-size:0.86rem; outline:none; }
+.upi-id-input input:focus { border-color:var(--blue); }
+.upi-id-input button { background:var(--blue); color:#fff; border:none; padding:10px 16px; border-radius:var(--radius-sm); font-size:0.84rem; cursor:pointer; font-weight:500; }
+
+.cod-info { background:var(--bg); border-radius:var(--radius-md); padding:14px; font-size:0.84rem; color:var(--ink-2); }
+.cod-info strong { color:var(--ink); }
+
+/* ORDER REVIEW */
+.order-review-item { display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--silver-2); align-items:center; }
+.order-review-item:last-child { border-bottom:none; }
+.order-review-img { width:48px; height:48px; border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0; }
+.order-review-name { font-size:0.86rem; font-weight:600; }
+.order-review-meta { font-size:0.76rem; color:var(--ink-2); }
+.order-review-price { font-size:0.86rem; font-weight:700; margin-left:auto; }
+
+@media(max-width:900px){ .checkout-layout { grid-template-columns:1fr; } .addr-cards { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+
+<div class="breadcrumb">
+  <a href="index.html">Home</a><span>›</span>
+  <a href="cart.html">Cart</a><span>›</span>
+  <span>Checkout</span>
+</div>
+
+<div class="progress-steps" style="max-width:600px;margin:20px auto 0;padding:0 32px;">
+  <div class="step-item done"><div class="step-circle">✓</div><div class="step-label">Cart</div></div>
+  <div class="step-item active"><div class="step-circle">2</div><div class="step-label">Delivery</div></div>
+  <div class="step-item"><div class="step-circle">3</div><div class="step-label">Payment</div></div>
+  <div class="step-item"><div class="step-circle">4</div><div class="step-label">Confirm</div></div>
+</div>
+
+<div class="checkout-layout">
+  <div>
+    <!-- DELIVERY ADDRESS -->
+    <div class="checkout-section">
+      <div class="checkout-section-title"><div class="section-num">1</div> Delivery Address</div>
+      <div id="addr-section"></div>
+    </div>
+
+    <!-- PAYMENT -->
+    <div class="checkout-section" id="payment-section">
+      <div class="checkout-section-title"><div class="section-num">2</div> Payment Method</div>
+      <div class="payment-opts">
+        <!-- UPI -->
+        <div class="payment-opt selected" id="pay-upi" onclick="selectPayment('upi')">
+          <div class="payment-opt-header">
+            <input type="radio" name="payment" checked>
+            <div class="payment-opt-icon">📱</div>
+            <div class="payment-opt-label">
+              <div class="payment-opt-name">UPI Payment</div>
+              <div class="payment-opt-desc">Pay using any UPI app</div>
+            </div>
+            <span class="payment-opt-badge">FREE</span>
+          </div>
+          <div class="payment-opt-body">
+            <div class="upi-grid">
+              <div class="upi-app active" id="upi-gpay" onclick="selectUPIApp('gpay',this)"><div class="upi-app-icon">G</div>GPay</div>
+              <div class="upi-app" id="upi-phonepe" onclick="selectUPIApp('phonepe',this)"><div class="upi-app-icon">P</div>PhonePe</div>
+              <div class="upi-app" id="upi-paytm" onclick="selectUPIApp('paytm',this)"><div class="upi-app-icon">₹</div>Paytm</div>
+              <div class="upi-app" id="upi-other" onclick="selectUPIApp('other',this)"><div class="upi-app-icon">🔗</div>Other</div>
+            </div>
+            <div class="upi-id-input">
+              <input type="text" id="upi-id" placeholder="Enter UPI ID (e.g. name@upi)">
+              <button onclick="verifyUPI()">Verify</button>
+            </div>
+            <div id="upi-verify-msg" style="font-size:0.78rem;margin-top:6px;"></div>
+          </div>
+        </div>
+
+        <!-- COD -->
+        <div class="payment-opt" id="pay-cod" onclick="selectPayment('cod')">
+          <div class="payment-opt-header">
+            <input type="radio" name="payment">
+            <div class="payment-opt-icon">💵</div>
+            <div class="payment-opt-label">
+              <div class="payment-opt-name">Cash on Delivery</div>
+              <div class="payment-opt-desc">Pay when your order arrives</div>
+            </div>
+            <span class="payment-opt-badge" style="background:#fff7ed;color:#92400e;">+₹40</span>
+          </div>
+          <div class="payment-opt-body">
+            <div class="cod-info">
+              <strong>Cash on Delivery Details:</strong><br><br>
+              • A convenience fee of <strong>₹40</strong> applies to COD orders<br>
+              • Please keep exact change ready<br>
+              • Show your <strong>Delivery OTP</strong> to the agent<br>
+              • Open box delivery — inspect before paying
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER SUMMARY SIDEBAR -->
+  <div>
+    <div class="checkout-section">
+      <div class="checkout-section-title">Order Review</div>
+      <div id="order-review"></div>
+      <div class="divider"></div>
+      <div id="checkout-price-summary"></div>
+      <button class="btn btn-primary btn-full" style="margin-top:20px;" id="place-order-btn" onclick="placeOrder()">
+        🔐 Place Order Securely
+      </button>
+      <p style="font-size:0.72rem;color:var(--ink-3);text-align:center;margin-top:10px;">By placing order you agree to our Terms & Return Policy</p>
+    </div>
+
+    <div style="background:var(--surface);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);">
+      <div style="font-size:0.82rem;font-weight:600;margin-bottom:12px;">🛡️ Safe & Secure</div>
+      <div style="font-size:0.78rem;color:var(--ink-2);line-height:1.8;">
+        ✓ OTP-verified delivery<br>
+        ✓ Open box inspection<br>
+        ✓ Encrypted transaction<br>
+        ✓ 7-day refund guarantee
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/otp.js"></script>
+<script src="js/components.js"></script>
+<script>
+let selectedAddress = null;
+let paymentMethod = 'upi';
+let selectedUPI = 'gpay';
+let upiVerified = false;
+
+function loadAddressSection() {
+  const user = getCurrentUser();
+  const sec = document.getElementById('addr-section');
+  if (!user) {
+    sec.innerHTML = `
+      <p style="color:var(--ink-2);font-size:0.9rem;margin-bottom:16px;">Please sign in to continue</p>
+      <a href="signin.html?redirect=checkout.html" class="btn btn-primary">Sign In to Continue</a>`;
+    return;
+  }
+  if (!user.addresses || user.addresses.length === 0) {
+    sec.innerHTML = `
+      <p style="color:var(--ink-2);font-size:0.9rem;margin-bottom:16px;">No saved addresses. Please add one.</p>
+      ${buildAddressForm()}`;
+    return;
+  }
+  selectedAddress = user.addresses.find(a => a.isDefault) || user.addresses[0];
+  sec.innerHTML = `
+    <div class="addr-cards">
+      ${user.addresses.map(a => `
+        <div class="addr-card ${a.id === selectedAddress.id ? 'selected' : ''}" onclick="selectAddr('${a.id}')">
+          <div class="addr-check">✓</div>
+          <div class="addr-card-label">${a.label || 'Address'}</div>
+          <div class="addr-card-name">${a.name}</div>
+          <div class="addr-card-text">${a.line1}, ${a.city}, ${a.state} — ${a.pincode}</div>
+          <div class="addr-card-text">${a.phone}</div>
+        </div>`).join('')}
+      ${user.addresses.length < 3 ? `
+        <div class="addr-card" onclick="showAddressForm()" style="display:flex;align-items:center;justify-content:center;border-style:dashed;color:var(--blue);">
+          <div style="text-align:center;"><div style="font-size:1.5rem;">+</div><div style="font-size:0.82rem;font-weight:600;">Add Address</div></div>
+        </div>` : ''}
+    </div>
+    <div id="address-form-container"></div>`;
+}
+
+function selectAddr(id) {
+  const user = getCurrentUser();
+  selectedAddress = user.addresses.find(a => a.id === id);
+  document.querySelectorAll('.addr-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function showAddressForm() {
+  document.getElementById('address-form-container').innerHTML = buildAddressForm();
+}
+
+function buildAddressForm() {
+  return `
+    <div style="background:var(--bg);border-radius:var(--radius-md);padding:20px;margin-top:12px;">
+      <h4 style="font-size:0.9rem;font-weight:600;margin-bottom:16px;">Add New Address</h4>
+      <div class="form-row">
+        <div class="form-group"><label>Full Name</label><input type="text" id="anew-name" placeholder="Full name"></div>
+        <div class="form-group"><label>Phone</label><input type="tel" id="anew-phone" placeholder="+91 XXXXX XXXXX"></div>
+      </div>
+      <div class="form-group"><label>Address Line</label><input type="text" id="anew-line1" placeholder="House no, Street, Area"></div>
+      <div class="form-row">
+        <div class="form-group"><label>City</label><input type="text" id="anew-city" placeholder="City"></div>
+        <div class="form-group"><label>State</label><input type="text" id="anew-state" placeholder="State"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Pincode</label><input type="text" id="anew-pin" maxlength="6" placeholder="6-digit pincode"></div>
+        <div class="form-group"><label>Label</label>
+          <select id="anew-label"><option>Home</option><option>Work</option><option>Other</option></select>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="saveNewAddress()">Save Address</button>
+    </div>`;
+}
+
+async function saveNewAddress() {
+  const addr = {
+    name: document.getElementById('anew-name').value.trim(),
+    phone: document.getElementById('anew-phone').value.trim(),
+    line1: document.getElementById('anew-line1').value.trim(),
+    city: document.getElementById('anew-city').value.trim(),
+    state: document.getElementById('anew-state').value.trim(),
+    pincode: document.getElementById('anew-pin').value.trim(),
+    label: document.getElementById('anew-label').value
+  };
+  if (!addr.name || !addr.line1 || !addr.city || !addr.pincode) { showToast('Please fill all fields', 'error'); return; }
+  const res = await addAddress(addr);
+  if (res.success) { showToast('Address saved!', 'success'); loadAddressSection(); }
+  else showToast(res.error, 'error');
+}
+
+function selectPayment(method) {
+  paymentMethod = method;
+  document.querySelectorAll('.payment-opt').forEach(o => o.classList.remove('selected'));
+  document.getElementById('pay-' + method).classList.add('selected');
+  document.querySelectorAll('.payment-opt-header input').forEach(r => r.checked = false);
+  document.getElementById('pay-' + method).querySelector('input').checked = true;
+  renderCheckoutSummary();
+}
+
+function selectUPIApp(app, el) {
+  selectedUPI = app;
+  document.querySelectorAll('.upi-app').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function verifyUPI() {
+  const id = document.getElementById('upi-id').value.trim();
+  const msg = document.getElementById('upi-verify-msg');
+  if (!id.includes('@')) { msg.innerHTML = '<span style="color:var(--error);">Please enter a valid UPI ID (e.g. name@upi)</span>'; return; }
+  msg.innerHTML = '<span style="color:var(--success);">✓ UPI ID verified</span>';
+  upiVerified = true;
+}
+
+function renderOrderReview() {
+  const cart = getCart();
+  document.getElementById('order-review').innerHTML = cart.map(item => {
+    const p = getProductById(item.productId);
+    if (!p) return '';
+    const v = p.variants[item.variantIndex || 0];
+    const price = v ? v.price : p.price;
+    return `
+      <div class="order-review-item">
+        <div class="order-review-img" style="background:${p.color}20;">${p.emoji}</div>
+        <div style="flex:1;">
+          <div class="order-review-name">${p.name}</div>
+          <div class="order-review-meta">${v ? v.label : ''} × ${item.qty}</div>
+        </div>
+        <div class="order-review-price">${formatPrice(price * item.qty)}</div>
+      </div>`;
+  }).join('');
+}
+
+/** Amount the customer actually pays now (0 when a coupon covers the whole order). */
+function getCheckoutTotal() {
+  const summary = JSON.parse(localStorage.getItem('vantair_order_summary') || '{}');
+  // Use ?? not || so a legitimate ₹0 total/subtotal isn't replaced by the cart total.
+  const baseTotal = summary.total ?? getCartTotal();
+  const codFee = paymentMethod === 'cod' ? VANTAIR.delivery.codCharge : 0;
+  return Math.max(0, baseTotal + codFee);
+}
+
+function renderCheckoutSummary() {
+  const summary = JSON.parse(localStorage.getItem('vantair_order_summary') || '{}');
+  const codFee = paymentMethod === 'cod' ? VANTAIR.delivery.codCharge : 0;
+  const total = getCheckoutTotal();
+  document.getElementById('checkout-price-summary').innerHTML = `
+    <div class="summary-row"><span>Subtotal</span><span>${formatPrice(summary.subtotal ?? getCartTotal())}</span></div>
+    ${summary.discount > 0 ? `<div class="summary-row savings"><span>Discount</span><span>-${formatPrice(summary.discount)}</span></div>` : ''}
+    <div class="summary-row"><span>Delivery</span><span>${summary.delivery === 0 ? '<span style="color:var(--success)">FREE</span>' : formatPrice(summary.delivery ?? 49)}</span></div>
+    ${codFee > 0 ? `<div class="summary-row"><span>COD Fee</span><span>${formatPrice(codFee)}</span></div>` : ''}
+    <div class="summary-row total"><span>Total Payable</span><span>${formatPrice(total)}</span></div>
+    ${total === 0 ? `<div style="background:#d1fae5;border-radius:var(--radius-sm);padding:10px 14px;margin-top:12px;font-size:0.8rem;color:#065f46;">🎉 Your coupon covers the full amount — no payment needed. Just place your order.</div>` : ''}`;
+  syncPaymentVisibility(total);
+}
+
+/** When the order is fully covered, paying makes no sense — collapse the payment step. */
+function syncPaymentVisibility(total) {
+  const paySection = document.getElementById('payment-section');
+  const btn = document.getElementById('place-order-btn');
+  const fullyCovered = total === 0;
+  if (paySection) paySection.style.display = fullyCovered ? 'none' : '';
+  if (btn) btn.textContent = fullyCovered ? '🎉 Place Order (No Payment Due)' : '🔐 Place Order Securely';
+}
+
+async function placeOrder() {
+  const user = getCurrentUser();
+  if (!user) { showToast('Please sign in first', 'error'); window.location.href = 'signin.html?redirect=checkout.html'; return; }
+  if (!selectedAddress) { showToast('Please select a delivery address', 'error'); return; }
+  // Skip payment-method validation entirely when a coupon covers the full amount.
+  const payableNow = getCheckoutTotal();
+  if (payableNow > 0 && paymentMethod === 'upi' && !upiVerified) {
+    const upiId = document.getElementById('upi-id')?.value.trim();
+    if (!upiId || !upiId.includes('@')) { showToast('Please verify your UPI ID', 'error'); return; }
+  }
+
+  const cart = getCart();
+  if (!cart.length) { showToast('Your cart is empty', 'error'); return; }
+
+  const btn = document.getElementById('place-order-btn');
+  btn.textContent = '⏳ Processing...';
+  btn.disabled = true;
+
+  const summary = JSON.parse(localStorage.getItem('vantair_order_summary') || '{}');
+
+  try {
+    // The backend recomputes every total server-side; we just send the cart,
+    // chosen address, payment method, coupon and delivery type.
+    const order = await api.placeOrder({
+      userId: user.id,
+      addressId: selectedAddress.id,
+      payment: paymentMethod,
+      couponCode: summary.coupon ? summary.coupon.code : null,
+      deliveryType: summary.deliveryType || 'standard',
+      items: cart.map(item => ({
+        productId: item.productId,
+        variantIndex: item.variantIndex || 0,
+        qty: item.qty,
+      })),
+    });
+
+    saveCart([]);
+    localStorage.removeItem('vantair_order_summary');
+    window.location.href = 'order-confirm.html?id=' + order.id;
+  } catch (e) {
+    showToast(e.message, 'error');
+    btn.textContent = '🔐 Place Order Securely';
+    btn.disabled = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Pull the latest user (with current addresses) from the API before rendering.
+  if (typeof refreshSessionUser === 'function') { try { await refreshSessionUser(); } catch (e) {} }
+  loadAddressSection();
+  renderOrderReview();
+  renderCheckoutSummary();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Product — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.product-detail { max-width:1200px; margin:0 auto; padding:40px 32px; display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start; }
+.product-visual { position:sticky; top:80px; }
+.product-main-img {
+  aspect-ratio:1; border-radius:var(--radius-xl);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10rem; position:relative; overflow:hidden;
+  box-shadow:var(--shadow-md);
+}
+.product-thumbs { display:flex; gap:10px; margin-top:16px; }
+.product-thumb {
+  width:64px; height:64px; border-radius:var(--radius-md);
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; cursor:pointer; border:2px solid transparent;
+  transition:border-color var(--transition);
+}
+.product-thumb.active { border-color:var(--blue); }
+.product-info {}
+.product-cat { font-size:0.76rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue); margin-bottom:8px; }
+.product-name-h1 { font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; line-height:1.1; margin-bottom:8px; }
+.product-tagline { font-size:1rem; color:var(--ink-2); margin-bottom:16px; font-style:italic; }
+.product-rating { display:flex; align-items:center; gap:10px; margin-bottom:24px; }
+.product-price-row { display:flex; align-items:center; gap:12px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--silver-2); }
+.product-price-main { font-size:2rem; font-weight:700; color:var(--ink); }
+.product-price-mrp { font-size:1.1rem; color:var(--ink-3); text-decoration:line-through; }
+.product-price-off { background:var(--success); color:#fff; font-size:0.82rem; font-weight:700; padding:4px 12px; border-radius:var(--radius-pill); }
+
+.variant-label { font-size:0.78rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-2); margin-bottom:10px; }
+.variants { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
+.variant-btn {
+  padding:8px 18px; border-radius:var(--radius-md);
+  font-size:0.85rem; font-weight:500;
+  border:1.5px solid rgba(0,0,0,0.12); background:var(--surface);
+  cursor:pointer; transition:all var(--transition);
+}
+.variant-btn:hover { border-color:var(--blue); color:var(--blue); }
+.variant-btn.active { border-color:var(--blue); background:var(--blue-light); color:var(--blue); }
+
+.qty-row { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+.qty-label { font-size:0.78rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-2); }
+.qty-control { display:flex; align-items:center; gap:0; border:1.5px solid rgba(0,0,0,0.12); border-radius:var(--radius-md); overflow:hidden; }
+.qty-btn { width:38px; height:38px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; cursor:pointer; background:var(--bg); transition:background var(--transition); border:none; }
+.qty-btn:hover { background:var(--blue-light); color:var(--blue); }
+.qty-num { width:44px; text-align:center; font-size:0.95rem; font-weight:600; border:none; background:none; pointer-events:none; }
+
+.product-actions { display:flex; gap:12px; margin-bottom:28px; }
+.product-actions .btn { flex:1; padding:14px; font-size:0.95rem; }
+
+.delivery-info { background:var(--bg); border-radius:var(--radius-md); padding:16px 20px; margin-bottom:24px; }
+.delivery-row { display:flex; align-items:center; gap:10px; padding:6px 0; font-size:0.84rem; color:var(--ink-2); }
+.delivery-row strong { color:var(--ink); }
+.pincode-check { display:flex; gap:8px; margin-top:10px; }
+.pincode-check input { flex:1; padding:9px 14px; border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-sm); font-size:0.84rem; outline:none; }
+.pincode-check input:focus { border-color:var(--blue); }
+.pincode-check button { background:var(--blue); color:#fff; padding:9px 16px; border:none; border-radius:var(--radius-sm); font-size:0.84rem; cursor:pointer; }
+
+.product-tabs { margin-top:40px; }
+.product-tab-nav { display:flex; gap:0; border-bottom:2px solid var(--silver-2); }
+.product-tab-btn {
+  padding:12px 24px; font-size:0.9rem; font-weight:500; color:var(--ink-2);
+  background:none; border:none; cursor:pointer;
+  border-bottom:2px solid transparent; margin-bottom:-2px;
+  transition:all var(--transition);
+}
+.product-tab-btn.active { color:var(--blue); border-bottom-color:var(--blue); }
+.product-tab-content { padding:24px 0; display:none; }
+.product-tab-content.active { display:block; }
+
+.benefits-list { list-style:none; }
+.benefits-list li { display:flex; align-items:center; gap:10px; padding:8px 0; font-size:0.9rem; color:var(--ink); }
+.benefits-list li::before { content:'✓'; color:var(--success); font-weight:700; }
+
+.reviews-section {}
+.review-summary { display:flex; gap:32px; align-items:center; padding:24px 0; border-bottom:1px solid var(--silver-2); margin-bottom:20px; }
+.review-big-num { font-family:'Playfair Display',serif; font-size:4rem; font-weight:700; color:var(--ink); line-height:1; }
+.review-bars { flex:1; }
+.review-bar-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.review-bar-label { font-size:0.78rem; color:var(--ink-2); width:20px; text-align:right; }
+.review-bar-track { flex:1; height:6px; background:var(--silver-2); border-radius:3px; overflow:hidden; }
+.review-bar-fill { height:100%; background:var(--blue); border-radius:3px; }
+.review-card { padding:20px 0; border-bottom:1px solid var(--silver-2); }
+.review-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+.reviewer-name { font-weight:600; font-size:0.9rem; }
+.review-date { font-size:0.76rem; color:var(--ink-3); }
+.review-text { font-size:0.88rem; color:var(--ink-2); line-height:1.65; }
+.write-review-btn { margin-top:20px; }
+
+.related-section { background:var(--surface); padding:60px 32px; }
+
+@media(max-width:768px){
+  .product-detail { grid-template-columns:1fr; gap:32px; padding:20px 16px; }
+  .product-visual { position:static; }
+  .product-actions { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+
+<div class="breadcrumb" id="breadcrumb">
+  <a href="index.html">Home</a><span>›</span>
+  <a href="shop.html">Shop</a><span>›</span>
+  <span id="bc-product">Product</span>
+</div>
+
+<div class="product-detail" id="product-detail">
+  <div style="text-align:center;padding:80px;color:var(--ink-3);">Loading product...</div>
+</div>
+
+<div class="related-section">
+  <div class="container">
+    <h2 class="section-title" style="margin-bottom:32px;">You May Also Like</h2>
+    <div class="grid-4" id="related-grid"></div>
+  </div>
+</div>
+
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script>
+let currentProduct = null;
+let selectedVariant = 0;
+let qty = 1;
+let userReviews = [];
+
+function loadProduct() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) { window.location.href = 'shop.html'; return; }
+
+  const p = getProductById(id);
+  if (!p) {
+    // The bundled catalog is only an instant-render fallback. A product added
+    // via the admin panel won't be in it — it arrives with the live API catalog.
+    // Don't declare a 404 until that live refresh has completed; the
+    // 'vantair:catalog' listener below re-runs loadProduct() once it does.
+    if (!VANTAIR.catalogReady) return;
+    window.location.href = '404.html';
+    return;
+  }
+  // Normalise products coming from the API/admin: they may omit variants, mrp,
+  // benefits, etc. The render below assumes these exist, so backfill sane
+  // defaults to avoid throwing (which would leave "Loading product..." stuck).
+  if (!Array.isArray(p.variants) || p.variants.length === 0) {
+    p.variants = [{ label: 'Standard', price: p.price }];
+  }
+  if (!Array.isArray(p.benefits)) p.benefits = [];
+  if (p.mrp == null || p.mrp <= 0) p.mrp = p.price;
+  if (!p.color) p.color = '#2c2c54';
+  if (!p.emoji) p.emoji = '🛍️';
+  currentProduct = p;
+
+  document.title = p.name + ' — Vantair';
+  document.getElementById('bc-product').textContent = p.name;
+
+  const disc = p.mrp > p.price ? Math.round((1 - p.price/p.mrp)*100) : 0;
+  const inWL = isInWishlist(p.id);
+
+  // Load reviews
+  userReviews = JSON.parse(localStorage.getItem('vantair_reviews_' + p.id) || '[]');
+
+  document.getElementById('product-detail').innerHTML = `
+    <div class="product-visual">
+      <div class="product-main-img" style="background:${p.color}20;" id="main-img">
+        <span style="font-size:9rem;">${p.emoji}</span>
+      </div>
+      <div class="product-thumbs">
+        ${p.variants.map((v,i) => `
+          <div class="product-thumb ${i===0?'active':''}" onclick="selectThumb(${i},this)" style="background:${p.color}15;">${p.emoji}</div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="product-info">
+      <div class="product-cat">${p.categoryLabel}</div>
+      <h1 class="product-name-h1">${p.name}</h1>
+      <p class="product-tagline">${p.tagline}</p>
+      <div class="product-rating">
+        <span class="stars">${'★'.repeat(Math.floor(p.rating))}${'☆'.repeat(5-Math.floor(p.rating))}</span>
+        <span style="font-size:0.9rem;font-weight:600;">${p.rating}</span>
+        <span style="font-size:0.84rem;color:var(--ink-3);">(${p.reviews + userReviews.length} reviews)</span>
+        ${p.expressEligible ? '<span class="badge badge-green">⚡ Express Eligible</span>' : ''}
+      </div>
+
+      <div class="product-price-row">
+        <span class="product-price-main" id="price-display">${formatPrice(p.variants[0].price)}</span>
+        ${disc > 0 ? `<span class="product-price-mrp">${formatPrice(p.mrp)}</span>
+        <span class="product-price-off">${disc}% off</span>` : ''}
+      </div>
+
+      <div class="variant-label">Select Size / Variant</div>
+      <div class="variants" id="variants-list">
+        ${p.variants.map((v,i) => `
+          <button class="variant-btn ${i===0?'active':''}" onclick="selectVariant(${i},this)">
+            ${v.label} — ${formatPrice(v.price)}
+          </button>
+        `).join('')}
+      </div>
+
+      <div class="qty-row">
+        <span class="qty-label">Quantity</span>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <input class="qty-num" id="qty-display" value="1" readonly>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+
+      <div class="product-actions">
+        <button class="btn btn-primary" onclick="addCurrentToCart()">🛒 Add to Cart</button>
+        <button class="btn btn-secondary" onclick="buyNow()">Buy Now →</button>
+        <button class="btn btn-icon btn-secondary" onclick="handleWishlist(this)" title="Wishlist" id="wl-btn">
+          ${inWL ? '❤️' : '♡'}
+        </button>
+      </div>
+
+      <div class="delivery-info">
+        <div class="delivery-row">📦 <div><strong>Free Delivery</strong> on orders above ${formatPrice(999)}</div></div>
+        <div class="delivery-row">🔄 <div><strong>Open Box Delivery</strong> — Inspect before accepting</div></div>
+        <div class="delivery-row">🔐 <div><strong>Secure OTP</strong> delivery verification</div></div>
+        ${p.expressEligible ? '<div class="delivery-row">⚡ <div><strong>Express Delivery</strong> available for select pincodes</div></div>' : ''}
+        <div class="pincode-check">
+          <input type="text" id="pincode-input" maxlength="6" placeholder="Enter pincode to check delivery">
+          <button onclick="checkPincode()">Check</button>
+        </div>
+        <div id="pincode-result" style="margin-top:8px;font-size:0.82rem;"></div>
+      </div>
+
+      <div class="product-tabs">
+        <div class="product-tab-nav">
+          <button class="product-tab-btn active" onclick="showTab('desc',this)">Description</button>
+          <button class="product-tab-btn" onclick="showTab('benefits',this)">Benefits</button>
+          <button class="product-tab-btn" onclick="showTab('ingredients',this)">Ingredients</button>
+          <button class="product-tab-btn" onclick="showTab('reviews',this)">Reviews (${p.reviews + userReviews.length})</button>
+        </div>
+        <div class="product-tab-content active" id="tab-desc">
+          <p style="line-height:1.75;color:var(--ink-2);">${p.description}</p>
+        </div>
+        <div class="product-tab-content" id="tab-benefits">
+          <ul class="benefits-list">
+            ${p.benefits.map(b => `<li>${b}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="product-tab-content" id="tab-ingredients">
+          <p style="font-size:0.84rem;color:var(--ink-2);line-height:1.7;"><strong>Ingredients:</strong> ${p.ingredients}</p>
+        </div>
+        <div class="product-tab-content" id="tab-reviews">
+          ${buildReviewsTab(p)}
+        </div>
+      </div>
+    </div>
+  `;
+
+  loadRelated(p);
+}
+
+function selectVariant(idx, btn) {
+  selectedVariant = idx;
+  document.querySelectorAll('.variant-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+  document.getElementById('price-display').textContent = formatPrice(currentProduct.variants[idx].price);
+}
+
+function selectThumb(idx, el) {
+  document.querySelectorAll('.product-thumb').forEach((t,i) => t.classList.toggle('active', i===idx));
+}
+
+function changeQty(delta) {
+  qty = Math.max(1, Math.min(10, qty + delta));
+  document.getElementById('qty-display').value = qty;
+}
+
+function addCurrentToCart() {
+  if (!currentProduct) return;
+  addToCart(currentProduct.id, selectedVariant, qty);
+  showToast(`🛒 ${currentProduct.name} added to cart!`, 'success');
+}
+
+function buyNow() {
+  if (!currentProduct) return;
+  addToCart(currentProduct.id, selectedVariant, qty);
+  window.location.href = 'cart.html';
+}
+
+function handleWishlist(btn) {
+  const added = toggleWishlist(currentProduct.id);
+  btn.innerHTML = added ? '❤️' : '♡';
+  showToast(added ? '❤️ Added to wishlist' : 'Removed from wishlist', added ? 'success' : 'default');
+}
+
+function checkPincode() {
+  const pin = document.getElementById('pincode-input').value.trim();
+  const res = document.getElementById('pincode-result');
+  if (pin.length !== 6 || isNaN(pin)) { res.innerHTML = '<span style="color:var(--error);">Please enter a valid 6-digit pincode</span>'; return; }
+  const isExpress = isExpressAvailable(pin);
+  const deliveryDate = getDeliveryDate(pin, false);
+  const expressDate = isExpress ? getDeliveryDate(pin, true, 'Next Day') : null;
+  res.innerHTML = `
+    <span style="color:var(--success);">✓ Delivery available to ${pin}</span><br>
+    <span style="color:var(--ink-2);">Standard delivery by ${deliveryDate}</span>
+    ${isExpress && currentProduct.expressEligible ? `<br><span style="color:var(--blue);">⚡ Express (Next Day) available for +₹149</span>` : ''}
+  `;
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.product-tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.product-tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function buildReviewsTab(p) {
+  const allReviews = [
+    ...userReviews,
+    { name:'Priya S.', rating:5, text:'Absolutely love it! Highly recommend.', date:'2 days ago' },
+    { name:'Rahul D.', rating:4, text:'Great product, fast delivery.', date:'1 week ago' }
+  ];
+  const avgRating = p.rating;
+  return `
+    <div class="review-summary">
+      <div>
+        <div class="review-big-num">${avgRating}</div>
+        <div class="stars" style="font-size:1.1rem;">${'★'.repeat(Math.floor(avgRating))}</div>
+        <div style="font-size:0.76rem;color:var(--ink-3);margin-top:4px;">${p.reviews + userReviews.length} reviews</div>
+      </div>
+      <div class="review-bars">
+        ${[5,4,3,2,1].map(star => `
+          <div class="review-bar-row">
+            <span class="review-bar-label">${star}</span>
+            <div class="review-bar-track"><div class="review-bar-fill" style="width:${star===5?75:star===4?15:5}%;"></div></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ${allReviews.map(r => `
+      <div class="review-card">
+        <div class="review-header">
+          <div>
+            <div class="reviewer-name">${r.name}</div>
+            <div class="stars" style="font-size:0.85rem;">${'★'.repeat(r.rating)}</div>
+          </div>
+          <span class="review-date">${r.date || 'Recent'}</span>
+        </div>
+        <p class="review-text">${r.text}</p>
+      </div>
+    `).join('')}
+    <button class="btn btn-ghost write-review-btn" onclick="showWriteReview()">✍️ Write a Review</button>
+    <div id="review-form" style="display:none;margin-top:20px;background:var(--bg);padding:20px;border-radius:var(--radius-md);">
+      <h4 style="margin-bottom:16px;">Your Review</h4>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:0.78rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-2);display:block;margin-bottom:8px;">Rating</label>
+        <div style="display:flex;gap:8px;" id="star-selector">
+          ${[1,2,3,4,5].map(s => `<span style="font-size:1.5rem;cursor:pointer;" onclick="setReviewStar(${s})" data-star="${s}">☆</span>`).join('')}
+        </div>
+      </div>
+      <div class="form-group"><label>Your Name</label><input type="text" id="rev-name" placeholder="Your name"></div>
+      <div class="form-group"><label>Review</label><textarea id="rev-text" placeholder="Share your experience..."></textarea></div>
+      <button class="btn btn-primary" onclick="submitReview()">Submit Review</button>
+    </div>
+  `;
+}
+
+let reviewStar = 5;
+function showWriteReview() { document.getElementById('review-form').style.display = 'block'; }
+function setReviewStar(s) {
+  reviewStar = s;
+  document.querySelectorAll('#star-selector span').forEach((el,i) => el.textContent = i < s ? '★' : '☆');
+}
+function submitReview() {
+  const name = document.getElementById('rev-name').value.trim();
+  const text = document.getElementById('rev-text').value.trim();
+  if (!name || !text) { showToast('Please fill in all fields', 'error'); return; }
+  const review = { name, rating: reviewStar, text, date: 'Just now' };
+  userReviews.push(review);
+  localStorage.setItem('vantair_reviews_' + currentProduct.id, JSON.stringify(userReviews));
+  showToast('✅ Review submitted!', 'success');
+  document.getElementById('tab-reviews').innerHTML = buildReviewsTab(currentProduct);
+}
+
+function loadRelated(p) {
+  const related = VANTAIR.products.filter(r => r.category === p.category && r.id !== p.id).slice(0,4);
+  document.getElementById('related-grid').innerHTML = related.map(r => {
+    const disc = (r.mrp && r.mrp > r.price) ? Math.round((1 - r.price/r.mrp)*100) : 0;
+    return `
+      <div class="product-card">
+        <div class="product-card-img" style="background:${r.color}20;min-height:180px;">
+          <div class="product-card-emoji">${r.emoji}</div>
+          ${r.badge ? `<span class="product-badge">${r.badge}</span>` : ''}
+        </div>
+        <div class="product-card-body">
+          <div class="product-card-name">${r.name}</div>
+          <div class="product-card-price">
+            <span class="price-main">${formatPrice(r.price)}</span>
+            ${disc > 0 ? `<span class="price-off">${disc}% off</span>` : ''}
+          </div>
+          <div class="product-card-actions">
+            <a href="product.html?id=${r.id}" class="btn btn-secondary btn-sm">View</a>
+            <button class="btn btn-primary btn-sm" onclick="addToCart('${r.id}',0,1);showToast('Added!','success')">+ Cart</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', loadProduct);
+// Re-render with live catalog data when it arrives from the API.
+document.addEventListener('vantair:catalog', loadProduct);
+</script>
+</body>
+</html>

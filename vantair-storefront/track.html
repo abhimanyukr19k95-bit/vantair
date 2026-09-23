@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Track Order — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.track-wrap { max-width:800px; margin:0 auto; padding:40px 32px; }
+.track-card { background:var(--surface); border-radius:var(--radius-xl); padding:36px; box-shadow:var(--shadow-md); }
+.track-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px; flex-wrap:wrap; gap:12px; }
+.track-id { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; }
+.live-badge { display:flex; align-items:center; gap:6px; background:#d1fae5; color:#065f46; font-size:0.76rem; font-weight:600; padding:6px 14px; border-radius:var(--radius-pill); }
+.live-dot { width:8px; height:8px; border-radius:50%; background:#16a34a; animation:pulse 1.5s infinite; }
+.eta-box { background:linear-gradient(135deg,var(--blue),#0055ee); border-radius:var(--radius-lg); padding:20px 24px; color:#fff; margin-bottom:28px; display:flex; justify-content:space-between; align-items:center; }
+.eta-label { font-size:0.76rem; opacity:0.8; text-transform:uppercase; letter-spacing:0.08em; }
+.eta-value { font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; margin-top:4px; }
+.delayed-notice { background:#fff7ed; border-radius:var(--radius-md); padding:14px 18px; margin-bottom:20px; font-size:0.84rem; color:#92400e; display:flex; gap:10px; align-items:center; }
+.partner-info { display:flex; gap:16px; background:var(--bg); border-radius:var(--radius-md); padding:16px 20px; margin-bottom:28px; align-items:center; }
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+<div class="breadcrumb"><a href="index.html">Home</a><span>›</span><a href="account.html">Account</a><span>›</span><span>Track Order</span></div>
+<div class="track-wrap" id="track-content">
+  <!-- Search form for guest -->
+  <div class="track-card" id="track-search-form">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:8px;">Track Your Order</h2>
+    <p style="color:var(--ink-2);font-size:0.9rem;margin-bottom:24px;">Enter your Order ID to track delivery status</p>
+    <div style="display:flex;gap:10px;">
+      <input type="text" id="track-input" placeholder="Order ID (e.g. VNT12345678)" style="flex:1;padding:12px 16px;border:1.5px solid rgba(0,0,0,0.1);border-radius:var(--radius-md);font-size:0.92rem;outline:none;">
+      <button class="btn btn-primary" onclick="trackOrder()">Track →</button>
+    </div>
+    <div id="track-result" style="margin-top:24px;"></div>
+  </div>
+</div>
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/otp.js"></script>
+<script src="js/components.js"></script>
+<script>
+async function trackOrder() {
+  const id = document.getElementById('track-input').value.trim();
+  if (!id) { showToast('Please enter an order ID', 'error'); return; }
+  let order = null;
+  try { order = await api.getOrder(id); } catch (e) {}
+  if (!order) { document.getElementById('track-result').innerHTML = '<p style="color:var(--error);">Order not found. Please check your Order ID.</p>'; return; }
+  renderTracking(order);
+}
+
+function renderTracking(order) {
+  const statuses = [
+    { key:'Placed',    label:'Order Placed',      icon:'📋', desc:'Your order has been confirmed' },
+    { key:'Processing',label:'Processing',         icon:'⚙️', desc:'We are preparing your order' },
+    { key:'Shipped',   label:'Shipped',            icon:'📦', desc:`Dispatched via ${order.deliveryPartner} · ${order.trackingId}` },
+    { key:'OutForDelivery',label:'Out for Delivery',icon:'🚚',desc:'Your order is on the way!' },
+    { key:'Delivered', label:'Delivered',          icon:'✅', desc:'Order delivered successfully' }
+  ];
+  const statusOrder = ['Placed','Processing','Confirmed','Shipped','OutForDelivery','Delivered'];
+  const currentIdx = Math.max(statusOrder.indexOf(order.status), 1);
+  const isDelayed = false; // Would be from real tracking API
+
+  document.getElementById('track-result').innerHTML = `
+    <div style="margin-top:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;">Order #${order.id}</div>
+        <span class="badge ${order.status==='Delivered'?'badge-green':order.status==='Cancelled'?'badge-red':'badge-blue'}">${order.status}</span>
+      </div>
+      <div class="eta-box">
+        <div><div class="eta-label">Expected Delivery</div><div class="eta-value">${order.expectedDelivery}</div></div>
+        <div style="text-align:right;"><div class="eta-label">Delivery Partner</div><div style="font-size:1rem;font-weight:600;margin-top:4px;">${order.deliveryPartner}</div><div style="font-size:0.76rem;opacity:0.8;">Tracking: ${order.trackingId}</div></div>
+      </div>
+      ${isDelayed ? `<div class="delayed-notice">⚠️ <div><strong>Slight Delay:</strong> Your order is running approximately 2 hours late. We apologise for the inconvenience.</div></div>` : ''}
+      <div class="partner-info">
+        <span style="font-size:1.5rem;">🔵</span>
+        <div>
+          <div style="font-weight:600;font-size:0.9rem;">${order.deliveryPartner}</div>
+          <div style="font-size:0.78rem;color:var(--ink-2);">Tracking ID: ${order.trackingId}</div>
+        </div>
+        <a href="https://www.bluedart.com" target="_blank" class="btn btn-secondary btn-sm" style="margin-left:auto;">Track on ${order.deliveryPartner}</a>
+      </div>
+      <div class="order-timeline">
+        ${statuses.map((s, i) => {
+          const isDone = i <= currentIdx;
+          const isActive = i === currentIdx;
+          return `
+            <div class="timeline-item ${isDone?'done':''} ${isActive?'active':''}">
+              <div class="timeline-dot">${isDone ? s.icon : i+1}</div>
+              <div class="timeline-content">
+                <h4>${s.label}</h4>
+                <p>${s.desc}</p>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (id) {
+    document.getElementById('track-input').value = id;
+    trackOrder();
+  }
+});
+</script>
+</body>
+</html>

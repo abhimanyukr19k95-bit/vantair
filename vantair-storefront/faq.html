@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FAQ — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.faq-wrap { max-width:800px; margin:0 auto; padding:60px 32px; }
+.faq-search { display:flex; gap:12px; margin-bottom:40px; }
+.faq-search input { flex:1; padding:14px 20px; border:1.5px solid rgba(0,0,0,0.1); border-radius:var(--radius-pill); font-size:0.95rem; outline:none; }
+.faq-search input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(0,51,204,0.1); }
+.faq-cats { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+.faq-item { border:1.5px solid rgba(0,0,0,0.08); border-radius:var(--radius-lg); margin-bottom:12px; overflow:hidden; transition:border-color var(--transition); }
+.faq-item:hover { border-color:rgba(0,51,204,0.2); }
+.faq-item.open { border-color:var(--blue); }
+.faq-q { display:flex; justify-content:space-between; align-items:center; padding:20px 24px; cursor:pointer; font-weight:600; font-size:0.95rem; gap:16px; }
+.faq-q .chevron { font-size:0.9rem; color:var(--ink-3); transition:transform 0.3s; flex-shrink:0; }
+.faq-item.open .faq-q .chevron { transform:rotate(180deg); color:var(--blue); }
+.faq-item.open .faq-q { color:var(--blue); }
+.faq-a { padding:0 24px; max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.3s; }
+.faq-item.open .faq-a { max-height:300px; padding:0 24px 20px; }
+.faq-a p { font-size:0.88rem; color:var(--ink-2); line-height:1.75; }
+.faq-still { background:linear-gradient(135deg,var(--blue),#0055ee); border-radius:var(--radius-xl); padding:48px; text-align:center; color:#fff; margin-top:48px; }
+.faq-still h3 { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; margin-bottom:12px; }
+.faq-still p { font-size:0.9rem; opacity:0.8; margin-bottom:24px; }
+.faq-still-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn-white-outline { background:transparent; color:#fff; border:1.5px solid rgba(255,255,255,0.5); padding:12px 24px; border-radius:var(--radius-pill); font-size:0.9rem; font-weight:500; text-decoration:none; transition:background 0.2s; }
+.btn-white-outline:hover { background:rgba(255,255,255,0.15); }
+.btn-white-solid { background:#fff; color:var(--blue); padding:12px 24px; border-radius:var(--radius-pill); font-size:0.9rem; font-weight:600; text-decoration:none; transition:transform 0.2s; }
+.btn-white-solid:hover { transform:translateY(-2px); }
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+
+<div class="page-header">
+  <h1>Frequently Asked Questions</h1>
+  <p>Everything you need to know about Vantair</p>
+</div>
+
+<div class="faq-wrap">
+  <div class="faq-search">
+    <input type="text" id="faq-search-input" placeholder="🔍 Search questions..." oninput="filterFAQs()">
+  </div>
+
+  <div class="faq-cats tabs">
+    <button class="tab-btn active" onclick="filterFAQCat('all',this)">All</button>
+    <button class="tab-btn" onclick="filterFAQCat('orders',this)">Orders & Delivery</button>
+    <button class="tab-btn" onclick="filterFAQCat('payment',this)">Payment</button>
+    <button class="tab-btn" onclick="filterFAQCat('returns',this)">Returns & Refunds</button>
+    <button class="tab-btn" onclick="filterFAQCat('account',this)">Account</button>
+    <button class="tab-btn" onclick="filterFAQCat('products',this)">Products</button>
+  </div>
+
+  <div id="faq-list"></div>
+
+  <div class="faq-still reveal">
+    <h3>Still have questions?</h3>
+    <p>Our support team is ready to help you with anything you need.</p>
+    <div class="faq-still-btns">
+      <a href="contact.html" class="btn-white-solid">Contact Us</a>
+      <a href="https://wa.me/919088841800" target="_blank" class="btn-white-outline">💬 WhatsApp Us</a>
+      <a href="mailto:vantair@zohomail.in" class="btn-white-outline">📧 Email Us</a>
+    </div>
+  </div>
+</div>
+
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script>
+const allFAQs = [
+  ...VANTAIR.faqs.map((f,i) => ({ ...f, cat: ['orders','orders','payment','orders','returns','returns','orders','orders','orders','partner'][i] || 'orders' })),
+  { q:'How do I create an account?', a:'Click Sign Up in the top navigation. Fill in your name, email, phone and password. You can also add a delivery address during registration for faster checkout.', cat:'account' },
+  { q:'Can I change my password?', a:'Yes. Go to My Account → Security Settings → Change Password. You will need to enter your current password to set a new one.', cat:'account' },
+  { q:'How many addresses can I save?', a:'You can save up to 3 delivery addresses in your account. You can set any one as your default address.', cat:'account' },
+  { q:'What products does Vantair sell?', a:'Vantair offers four categories: Perfumes (EDP, EDT, body mists, roll-ons), Toiletries (shampoo, body wash, soap, face wash), Skin Care (serums, moisturisers, sunscreen) and Cosmetics (lipstick, foundation, kajal, eyeshadow).', cat:'products' },
+  { q:'Are Vantair products safe to use?', a:'Yes. All Vantair products are developed with carefully selected ingredients and are safe for use as directed. Our skincare and cosmetics are dermatologically formulated.', cat:'products' },
+  { q:'What payment methods are accepted?', a:'We accept UPI (GPay, PhonePe, Paytm and all UPI apps) and Cash on Delivery. UPI is free; COD carries a ₹40 convenience fee.', cat:'payment' },
+  { q:'Is my payment information secure?', a:'Yes. All transactions are encrypted. We do not store your UPI ID or payment details on our servers.', cat:'payment' },
+  { q:'Can I use multiple coupons?', a:'Only one coupon code can be applied per order. You can also use your dashboard refund coupons on applicable orders.', cat:'payment' },
+  { q:'What is express delivery?', a:'Express delivery offers Same Day or Next Day delivery for orders from select pin codes near Kolkata. An additional charge of ₹149 applies. Availability depends on your pin code and product eligibility.', cat:'orders' },
+  { q:'Which courier partners does Vantair use?', a:'Vantair delivers via BlueDart and Shiprocket — two of India\'s most reliable logistics providers. You can track your shipment on their platforms using the tracking ID in your order.', cat:'orders' }
+];
+
+let activeCat = 'all';
+
+function renderFAQs(faqs) {
+  const list = document.getElementById('faq-list');
+  if (faqs.length === 0) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><h3>No results found</h3><p>Try a different search term</p></div>'; return; }
+  list.innerHTML = faqs.map((f, i) => `
+    <div class="faq-item reveal" id="faq-${i}" onclick="toggleFAQ(${i})">
+      <div class="faq-q">
+        <span>${f.q}</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="faq-a"><p>${f.a}</p></div>
+    </div>`).join('');
+}
+
+function toggleFAQ(i) {
+  const item = document.getElementById('faq-' + i);
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+function filterFAQs() {
+  const q = document.getElementById('faq-search-input').value.toLowerCase();
+  let faqs = activeCat === 'all' ? allFAQs : allFAQs.filter(f => f.cat === activeCat);
+  if (q) faqs = faqs.filter(f => f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q));
+  renderFAQs(faqs);
+}
+
+function filterFAQCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.faq-cats .tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterFAQs();
+}
+
+document.addEventListener('DOMContentLoaded', () => renderFAQs(allFAQs));
+</script>
+</body>
+</html>

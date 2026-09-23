@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>About — Vantair</title>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.about-hero { background:linear-gradient(135deg,#001a80,#0033CC); padding:100px 32px; text-align:center; color:#fff; }
+.about-hero h1 { font-family:'Playfair Display',serif; font-size:clamp(2.2rem,5vw,3.8rem); font-weight:700; margin-bottom:16px; }
+.about-hero p { font-size:1.1rem; opacity:0.8; max-width:560px; margin:0 auto; line-height:1.75; }
+.values-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.value-card { background:var(--surface); border-radius:var(--radius-lg); padding:36px 28px; text-align:center; box-shadow:var(--shadow-sm); transition:transform var(--transition),box-shadow var(--transition); }
+.value-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-md); }
+.value-icon { font-size:2.5rem; margin-bottom:16px; }
+.value-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; margin-bottom:10px; }
+.value-desc { font-size:0.86rem; color:var(--ink-2); line-height:1.65; }
+.mission-block { background:var(--ink); color:#fff; padding:80px 32px; text-align:center; }
+.mission-block h2 { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,4vw,2.8rem); font-weight:700; margin-bottom:20px; }
+.mission-block p { font-size:1rem; opacity:0.75; line-height:1.8; max-width:680px; margin:0 auto; }
+.stats-row { display:flex; justify-content:center; gap:60px; margin-top:48px; flex-wrap:wrap; }
+.stat-item { text-align:center; }
+.stat-num { font-family:'Playfair Display',serif; font-size:2.8rem; font-weight:700; color:#93c5fd; }
+.stat-lbl { font-size:0.76rem; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:0.1em; margin-top:6px; }
+@media(max-width:768px){ .values-grid{grid-template-columns:1fr;} .stats-row{gap:32px;} }
+</style>
+</head>
+<body>
+<div id="page-loader"></div>
+<div id="ann-bar"></div>
+<div id="lc-bar"></div>
+<header id="navbar"></header>
+<div id="mobile-nav"></div>
+
+<div class="about-hero">
+  <p class="section-label" style="color:#93c5fd;">Our Story</p>
+  <h1>Built in Kolkata.<br>Built for India.</h1>
+  <p>Vantair was founded with a single belief — that every Indian deserves access to premium quality beauty and lifestyle products without compromise.</p>
+</div>
+
+<section class="section" style="background:var(--surface);">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;">
+      <div class="reveal">
+        <p class="section-label">Who We Are</p>
+        <h2 class="section-title">A Brand Built on Quality & Trust</h2>
+        <p class="section-sub">Vantair is a premium beauty and lifestyle brand headquartered in Kolkata, West Bengal. We develop and curate an exceptional range of perfumes, skincare, toiletries and cosmetics — all crafted to our exacting quality standards and proudly sold under the Vantair name.</p>
+        <p style="font-size:0.92rem;color:var(--ink-2);line-height:1.75;margin-top:16px;">Every product that carries the Vantair name has been developed, tested and approved by our team. We believe that quality should never be a luxury — it should be the standard.</p>
+      </div>
+      <div class="reveal" style="background:linear-gradient(135deg,var(--blue-light),#e8f4ff);border-radius:var(--radius-xl);padding:48px;text-align:center;">
+        <div style="font-size:5rem;margin-bottom:20px;">🏆</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;margin-bottom:12px;">Premium. Purposeful. Proud.</div>
+        <p style="font-size:0.86rem;color:var(--ink-2);line-height:1.65;">Our products are more than just items on a shelf — they are an expression of who we are and what we believe Indian beauty brands can be.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:48px;">
+      <p class="section-label">What Drives Us</p>
+      <h2 class="section-title">Our Core Values</h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-card reveal"><div class="value-icon">💎</div><div class="value-title">Uncompromising Quality</div><p class="value-desc">Every Vantair product is developed against strict quality benchmarks. We never compromise on formulation, packaging or safety.</p></div>
+      <div class="value-card reveal"><div class="value-icon">🤝</div><div class="value-title">Customer First</div><p class="value-desc">From open box delivery to OTP-verified security, every feature we build is designed to protect and delight our customers.</p></div>
+      <div class="value-card reveal"><div class="value-icon">🌍</div><div class="value-title">Accessible Premium</div><p class="value-desc">We believe premium quality should be accessible to all. Our products are priced fairly without compromising on what matters.</p></div>
+      <div class="value-card reveal"><div class="value-icon">🔬</div><div class="value-title">Formulation Integrity</div><p class="value-desc">Our products are developed with carefully selected ingredients that are safe, effective and backed by science.</p></div>
+      <div class="value-card reveal"><div class="value-icon">📦</div><div class="value-title">Delivery Excellence</div><p class="value-desc">We partner with leading logistics providers to ensure your products arrive safely, on time and in perfect condition.</p></div>
+      <div class="value-card reveal"><div class="value-icon">🇮🇳</div><div class="value-title">Proudly Indian</div><p class="value-desc">Born and based in Kolkata, Vantair is proud to be an Indian brand serving Indian customers with world-class products.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="mission-block reveal">
+  <div class="container">
+    <h2>"To make premium beauty accessible,<br>trustworthy and truly Indian."</h2>
+    <p>This is our mission. Every product, every delivery, every interaction with Vantair is guided by this belief. We are not just selling products — we are building a brand that Indians can be proud of.</p>
+    <div class="stats-row">
+      <div class="stat-item"><div class="stat-num">32+</div><div class="stat-lbl">Products</div></div>
+      <div class="stat-item"><div class="stat-num">4K+</div><div class="stat-lbl">Customers</div></div>
+      <div class="stat-item"><div class="stat-num">4.8★</div><div class="stat-lbl">Avg Rating</div></div>
+      <div class="stat-item"><div class="stat-num">2025</div><div class="stat-lbl">Founded</div></div>
+    </div>
+  </div>
+</div>
+
+<section class="section" style="text-align:center;background:var(--surface);">
+  <div class="container reveal">
+    <p class="section-label">Our Location</p>
+    <h2 class="section-title">Find Us</h2>
+    <p class="section-sub" style="margin:16px auto 32px;">We are based in Kolkata, the cultural capital of India — a city known for its excellence, heritage and passion.</p>
+    <div style="background:var(--bg);border-radius:var(--radius-xl);padding:40px;max-width:500px;margin:0 auto;">
+      <div style="font-size:2.5rem;margin-bottom:16px;">📍</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:8px;">Vantair</div>
+      <div style="font-size:0.92rem;color:var(--ink-2);line-height:1.8;">Kolkata, West Bengal, India — 700001<br>
+        <a href="mailto:vantair@zohomail.in" style="color:var(--blue);">vantair@zohomail.in</a><br>
+        <a href="tel:+919088841800" style="color:var(--blue);">+91 90888 41800</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="footer"></footer>
+<a id="wa-float" target="_blank"></a>
+<script src="js/api.js"></script>
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+</body>
+</html>
